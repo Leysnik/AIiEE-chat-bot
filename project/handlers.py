@@ -1,33 +1,47 @@
 from aiogram import F, Router, types
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
-
 from aiogram import flags
 from aiogram.fsm.context import FSMContext
 import utils
 from states import Gen
-
 import kb as kb
 import text
 
-#from daily_tasks import generate_daily_task  
-
 router = Router()
 
-# обработчик команды /start
+# Обработчик команды /start
 @router.message(Command("start"))
 async def start_handler(msg: Message):
     await msg.answer(text.greet.format(name=msg.from_user.full_name), reply_markup=kb.menu)
 
-# обработчик нажатия кнопки "меню"
+# Обработчик нажатия кнопки "меню"
 @router.message(F.text == "меню")
 @router.message(F.text == "выйти в меню")
 @router.message(F.text == "◀️ выйти в меню")
 async def menu(msg: Message):
     await msg.answer(text.menu, reply_markup=kb.menu)
 
-'''
-@router.callback_query(F.data == "generate_text")
+@router.message()
+@flags.chat_action("typing")  # Показывает "набирает сообщение..."
+async def generate_reply(msg: Message):
+    prompt = msg.text
+    try:
+        # Генерация ответа с помощью модели
+        generated_text = await utils.generate_text(prompt)
+        if generated_text:
+            # Добавляем форматирование для блока
+            formatted_text = f"```\n{generated_text}\n```"
+            await msg.answer(formatted_text, parse_mode="Markdown")  # Используем Markdown для блоков
+        else:
+            await msg.answer("К сожалению, я не смог сгенерировать ответ.", parse_mode="Markdown")
+    except Exception as e:
+        await msg.answer("Произошла ошибка при обработке сообщения.", parse_mode="Markdown")
+        print(f"Ошибка: {e}")
+
+
+    '''
+    @router.callback_query(F.data == "generate_text")
 async def input_text_prompt(clbck: CallbackQuery, state: FSMContext):
     await state.set_state(Gen.text_prompt)
     await clbck.message.edit_text(text.gen_text)
