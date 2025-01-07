@@ -14,7 +14,7 @@ model = AutoModelForCausalLM.from_pretrained(
     torch_dtype=torch.float16,  #  16-битная точность для экономии памяти
 ).to('cuda')  # принудительная отправка модели на GPU
 
-# Функция генерации текста
+# функция генерации текста
 async def generate_text(prompt: str) -> str:
     try:
         messages = [

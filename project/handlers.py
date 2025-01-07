@@ -23,16 +23,15 @@ async def menu(msg: Message):
     await msg.answer(text.menu, reply_markup=kb.menu)
 
 @router.message()
-@flags.chat_action("typing")  # Показывает "набирает сообщение..."
+@flags.chat_action("typing")  # должен показывать "печатет..." А НЕ ПОКАЗЫВАЕТ
 async def generate_reply(msg: Message):
     prompt = msg.text
     try:
-        # Генерация ответа с помощью модели
         generated_text = await utils.generate_text(prompt)
         if generated_text:
-            # Добавляем форматирование для блока
+            # форматирование
             formatted_text = f"```\n{generated_text}\n```"
-            await msg.answer(formatted_text, parse_mode="Markdown")  # Используем Markdown для блоков
+            await msg.answer(formatted_text, parse_mode="Markdown")  #  Markdown для блоков
         else:
             await msg.answer("К сожалению, я не смог сгенерировать ответ.", parse_mode="Markdown")
     except Exception as e:
@@ -40,24 +39,7 @@ async def generate_reply(msg: Message):
         print(f"Ошибка: {e}")
 
 
-    '''
-    @router.callback_query(F.data == "generate_text")
-async def input_text_prompt(clbck: CallbackQuery, state: FSMContext):
-    await state.set_state(Gen.text_prompt)
-    await clbck.message.edit_text(text.gen_text)
-    await clbck.message.answer(text.gen_exit, reply_markup=kb.exit_kb)
-
-@router.message(Gen.text_prompt)
-@flags.chat_action("typing")
-async def generate_text(msg: Message, state: FSMContext):
-    prompt = msg.text
-    mesg = await msg.answer(text.gen_wait)
-    res = await utils.generate_text(prompt)
-    if not res:
-        return await mesg.edit_text(text.gen_error, reply_markup=kb.iexit_kb)
-    await mesg.edit_text(res[0] + text.text_watermark, disable_web_page_preview=True)
- 
-
+'''
 # обработчик для нажатия на кнопку "Ежедневные задания" 
 @router.callback_query(F.data == "daily_tasks")
 async def daily_tasks_handler(callback_query: CallbackQuery):
