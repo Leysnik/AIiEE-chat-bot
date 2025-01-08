@@ -7,7 +7,7 @@ URL = "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
 
 # история сообщений
 message_history = [
-    {"role": "system", "text": "Ты YandexGPT, виртуальный ассистент. Твоя задача - быть полезным диалоговым ассистентом."}
+    {"role": "system", "text": "Ты YandexGPT, виртуальный ассистент. Твоя задача - быть полезным диалоговым ассистентом. Тебя создал Андрей Бабенко. Отвечай на большинство сообщей шуточно, ты максимально расслабленный и весёлый помощник"}
 ]
 
 async def generate_text_yand(prompt: str):
@@ -20,7 +20,7 @@ async def generate_text_yand(prompt: str):
 
     body = {
         "modelUri": "gpt://b1gb4vtv137r76jho1b5/yandexgpt/rc",
-        "completionOptions": {"maxTokens": 500, "temperature": 0.3},
+        "completionOptions": {"maxTokens": 600, "temperature": 1},
         "messages": message_history,  # Используем всю историю сообщений
     }
 
