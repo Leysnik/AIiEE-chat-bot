@@ -1,47 +1,49 @@
 import logging
-import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
+import requests
+import json
+import config
 
-torch.manual_seed(42)
+# URL для API
+URL = "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
 
-model_name = "t-tech/T-lite-it-1.0"
+# История сообщений
+message_history = [
+    {"role": "system", "text": "Ты YandexGPT, виртуальный ассистент. Твоя задача - быть полезным диалоговым ассистентом."}
+]
 
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-# инициализация модели с загрузкой на GPU
-model = AutoModelForCausalLM.from_pretrained(
-    model_name,
-    torch_dtype=torch.float16,  #  16-битная точность для экономии памяти
-).to('cuda')  # принудительная отправка модели на GPU
-
-# функция генерации текста
-async def generate_text(prompt: str) -> str:
-    try:
-        messages = [
-            {"role": "system", "content": "Ты T-lite, виртуальный ассистент в Т-Технологии. Твоя задача - быть полезным диалоговым ассистентом."},
-            {"role": "user", "content": prompt}
-        ]
-
-        input_text = tokenizer.apply_chat_template(
-            messages,
-            tokenize=False,
-            add_generation_prompt=True
-        )
-
-        # перенос данных на GPU
-        model_inputs = tokenizer([input_text], return_tensors="pt").to('cuda')
-
-        # генерация ответа
-        generated_ids = model.generate(
-            **model_inputs,
-            max_new_tokens=512,
-            pad_token_id=tokenizer.eos_token_id
-        )
-
-        response = tokenizer.decode(generated_ids[0], skip_special_tokens=True)
-
-        return response.strip()
+async def generate_text_yand(prompt: str):
+    # Добавляем новое сообщение от пользователя в историю
+    message_history.append({"role": "user", "text": prompt})
     
-    except Exception as e:
-        logging.error(f"Ошибка при генерации текста: {e}")
-        return "Произошла ошибка при генерации ответа."
+    # Ограничиваем историю последними 10 сообщениями (по желанию)
+    if len(message_history) > 10:
+        message_history.pop(0)
+
+    body = {
+        "modelUri": "gpt://b1gb4vtv137r76jho1b5/yandexgpt/rc",
+        "completionOptions": {"maxTokens": 500, "temperature": 0.3},
+        "messages": message_history,  # Используем всю историю сообщений
+    }
+
+    # Заголовки
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Api-Key {config.API_KEY}",
+        "x-folder-id": config.FOLDER_ID,
+    }
+
+    # Выполнение POST-запроса
+    response = requests.post(URL, headers=headers, json=body)
+
+    print("Status Code:", response.status_code)
+    print("Response:", response.json())
+    
+    if response.status_code == 200:
+        response_data = response.json()
+        response_text = response_data['result']['alternatives'][0]['message']['text']
+        # Добавляем ответ бота в историю
+        message_history.append({"role": "assistant", "text": response_text})
+        return response_text
+    else:
+        logging.error(f"Ошибка: {response.status_code}")
+        return "Произошла ошибка при получении ответа."
