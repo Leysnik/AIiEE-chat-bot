@@ -7,7 +7,6 @@ from aiogram.fsm.context import FSMContext
 import logging
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
-
 from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram.fsm.state import State, StatesGroup
 
@@ -15,8 +14,6 @@ from utils import generate_text_yand
 from states import Form
 import kb as kb
 import text
-
-import json
 
 router = Router()
 
@@ -29,20 +26,22 @@ class User:
         
 dp = Dispatcher(storage=MemoryStorage())
 
-
-# Обработчик команды /start
+# обработчик команды /start
 @router.message(Command("start"))
 async def start_handler(msg: Message):
     await msg.answer(text.greet.format(name=msg.from_user.full_name), reply_markup=kb.menu)
 
-# Обработчик нажатия кнопки "меню"
+# обработчик нажатия кнопки "меню"
 @router.message(F.text == "меню")
 @router.message(F.text == "выйти в меню")
 @router.message(F.text == "◀️ выйти в меню")
+@router.message(F.text == "Меню")
+@router.message(F.text == "Выйти в меню")
+@router.message(F.text == "◀️ Выйти в меню")
 async def menu(msg: Message):
     await msg.answer(text.menu, reply_markup=kb.menu)
 
-# Обработчик сообщений
+# обработчик сообщений
 @dp.message(F.text, Form.registered)
 @router.message()
 @flags.chat_action("typing")  
@@ -60,6 +59,14 @@ async def generate_reply(msg: Message):
         await msg.answer("Произошла ошибка при обработке сообщения.")
         logging.error(f"Ошибка: {e}")
         
+        
+# Обработчик нажатия кнопки "Ежедневные задания"
+@router.message(Command("daily_tasks"))
+async def daily_tasks_handler(msg: Message):
+    await msg.answer("Вы выбрали ежедневные задания.")
+
+
+
 '''       
 @dp.message(CommandStart(), State(None))
 async def cmd_start(message: Message, state: FSMContext):
