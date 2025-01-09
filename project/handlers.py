@@ -31,6 +31,11 @@ dp = Dispatcher(storage=MemoryStorage())
 async def start_handler(msg: Message):
     await msg.answer(text.greet.format(name=msg.from_user.full_name), reply_markup=kb.menu)
 
+# Обработчик нажатия кнопки "Ежедневные задания"
+@router.message(Command("daily_tasks"))
+async def daily_tasks_handler(msg: Message):
+    await msg.answer("Вы выбрали ежедневные задания.")
+
 # обработчик нажатия кнопки "меню"
 @router.message(F.text == "меню")
 @router.message(F.text == "выйти в меню")
@@ -59,12 +64,6 @@ async def generate_reply(msg: Message):
         await msg.answer("Произошла ошибка при обработке сообщения.")
         logging.error(f"Ошибка: {e}")
         
-        
-# Обработчик нажатия кнопки "Ежедневные задания"
-@router.message(Command("daily_tasks"))
-async def daily_tasks_handler(msg: Message):
-    await msg.answer("Вы выбрали ежедневные задания.")
-
 
 
 '''       
