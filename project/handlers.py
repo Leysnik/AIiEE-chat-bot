@@ -57,7 +57,7 @@ async def generate_reply(msg: Message):
        # print(generated_text.json())
         if generated_text:
            # formatted_text = pre(generated_text)
-            await msg.answer(generated_text)
+            await msg.answer(generated_text, parse_mode="Markdown")
         else:
             await msg.answer("К сожалению, я не смог сгенерировать ответ.")
     except Exception as e:
