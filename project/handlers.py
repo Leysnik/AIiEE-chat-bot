@@ -10,30 +10,67 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram.fsm.state import State, StatesGroup
 
-from utils import generate_text_yand
-from states import Form
+from utils import generate_text_yand, validate_group, validate_name
+from states import RegistrationForm
 import kb as kb
 import text
+from db import User
+
 
 router = Router()
-
-listuser = {}
-
-class User:
-    def __init__(self, name):
-        self.name = name
-        self.code = ""
         
 dp = Dispatcher(storage=MemoryStorage())
 
 # обработчик команды /start
-@router.message(Command("start"))
-async def start_handler(msg: Message):
+@router.message(CommandStart()) 
+async def start_handler(msg: Message, session):
     await msg.answer(text.greet.format(name=msg.from_user.full_name), reply_markup=kb.menu)
+    
+@router.message(Command('register'), State(None))
+async def register_user(msg: Message, state: FSMContext, session):
+    await msg.answer(text.name_registration)
+    await state.set_state(RegistrationForm.name)
+
+@router.message(RegistrationForm.name)
+async def register_ask_forename(msg: Message, state: FSMContext, session):
+    name = msg.text
+    if not validate_name(name):
+        await msg.answer(text.error_registration)
+        return
+    await state.update_data(name=name)
+    await msg.answer(text.forename_registration)
+    await state.set_state(RegistrationForm.forename)
+
+@router.message(RegistrationForm.forename)
+async def register_ask_group(msg: Message, state: FSMContext, session):
+    forename = msg.text
+    if not validate_name(forename):
+        await msg.answer(text.error_registration)
+        return
+    await state.update_data(forename=forename)
+    await msg.answer(text.group_registration)
+    await state.set_state(RegistrationForm.group)
+
+@router.message(RegistrationForm.group)
+async def register_end(msg: Message, state: FSMContext, session):
+    group = msg.text
+    if not validate_group(group):
+        await msg.answer(text.error_registration)
+        return
+    await state.update_data(group=group)
+    
+    user_data = await state.get_data()
+    user = User(chat_id=msg.chat.id, name=user_data['name'], \
+                forename=user_data['forename'], group=user_data['group'])
+    session.add(user)
+    session.commit()
+    await msg.answer(text.ending_registration)
+    
+    await state.clear()
 
 # Обработчик нажатия кнопки "Ежедневные задания"
 @router.message(Command("daily_tasks"))
-async def daily_tasks_handler(msg: Message):
+async def daily_tasks_handler(msg: Message, session):
     await msg.answer("Вы выбрали ежедневные задания.")
 
 # обработчик нажатия кнопки "меню"
@@ -43,18 +80,18 @@ async def daily_tasks_handler(msg: Message):
 @router.message(F.text == "Меню")
 @router.message(F.text == "Выйти в меню")
 @router.message(F.text == "◀️ Выйти в меню")
-async def menu(msg: Message):
-    await msg.answer(text.menu, reply_markup=kb.menu)
+@router.message(Command('menu'))
+async def menu(msg: Message, session):
+    await msg.answer(text.start.format(name=msg.from_user.full_name), reply_markup=kb.menu)
 
 # обработчик сообщений
-@dp.message(F.text, Form.registered)
 @router.message()
 @flags.chat_action("typing")  
-async def generate_reply(msg: Message):
+async def generate_reply(msg: Message, session):
     prompt = msg.text
     try:
         generated_text = await generate_text_yand(prompt)
-       # print(generated_text.json())
+        # print(generated_text.json())
         if generated_text:
            # formatted_text = pre(generated_text)
             await msg.answer(generated_text, parse_mode="Markdown")

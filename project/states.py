@@ -1,6 +1,11 @@
 from aiogram.fsm.state import StatesGroup, State
 
-class Form(StatesGroup):
+class RegistrationForm(StatesGroup):
     name = State()
-    code = State()
-    registered = State()
+    forename = State()
+    group = State()
+
+def check_registration_state(state):
+    return RegistrationForm.name.state == state or \
+           RegistrationForm.forename.state == state or \
+           RegistrationForm.group.state == state

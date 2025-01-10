@@ -45,3 +45,9 @@ async def generate_text_yand(prompt: str):
     else:
         logging.error(f"Ошибка: {response.status_code}")
         return "Произошла ошибка при получении ответа."
+    
+def validate_name(name):
+    return name.isalpha()
+
+def validate_group(group):
+    return len(group) == 6 and group[:3].isalpha() and group[3:].isdigit()
