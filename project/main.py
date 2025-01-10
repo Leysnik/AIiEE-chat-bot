@@ -7,7 +7,6 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.client.default import DefaultBotProperties
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject
-from aiogram.types import Message, CallbackQuery
 from typing import Any, Awaitable, Callable, Dict
 
 import config
@@ -31,6 +30,7 @@ class DatabaseMiddleware(BaseMiddleware):
         session = self.session
         msg = event.message
         current_state = await data.get('state').get_state()
+        
         if session.query(User).filter(User.chat_id == chat_id).count() > 0 or \
            msg.text == '/register' or check_registration_state(current_state):
             with session as session:
@@ -51,5 +51,5 @@ async def main():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.INFO, filename="bot.log", filemode='a', format="%(asctime)s %(levelname)s %(message)s")
     asyncio.run(main())
