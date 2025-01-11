@@ -3,50 +3,93 @@ from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram import flags
 from aiogram.fsm.context import FSMContext
-import utils
-from states import Gen
+#from aiogram.utils.markdown import pre
+import logging
+from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.filters import CommandStart, Command, CommandObject
+from aiogram.fsm.state import State, StatesGroup
+
+from utils import generate_text_yand, validate_group, validate_name
+from states import RegistrationForm
 import kb as kb
 import text
+from db import User
+
 
 router = Router()
+        
+dp = Dispatcher(storage=MemoryStorage())
 
-# Обработчик команды /start
-@router.message(Command("start"))
-async def start_handler(msg: Message):
+# обработчик команды /start
+@router.message(CommandStart()) 
+async def start_handler(msg: Message, session):
     await msg.answer(text.greet.format(name=msg.from_user.full_name), reply_markup=kb.menu)
+    
+@router.message(Command('register'), State(None))
+async def register_user(msg: Message, state: FSMContext, session):
+    await msg.answer(text.name_registration)
+    await state.set_state(RegistrationForm.name)
 
-# Обработчик нажатия кнопки "меню"
+@router.message(RegistrationForm.name)
+async def register_ask_forename(msg: Message, state: FSMContext, session):
+    name = msg.text
+    if not validate_name(name):
+        await msg.answer(text.error_registration)
+        return
+    await state.update_data(name=name)
+    await msg.answer(text.forename_registration)
+    await state.set_state(RegistrationForm.forename)
+
+@router.message(RegistrationForm.forename)
+async def register_ask_group(msg: Message, state: FSMContext, session):
+    forename = msg.text
+    if not validate_name(forename):
+        await msg.answer(text.error_registration)
+        return
+    await state.update_data(forename=forename)
+    await msg.answer(text.group_registration)
+    await state.set_state(RegistrationForm.group)
+
+@router.message(RegistrationForm.group)
+async def register_end(msg: Message, state: FSMContext, session):
+    group = msg.text
+    if not validate_group(group):
+        await msg.answer(text.error_registration)
+        return
+    await state.update_data(group=group)
+    
+    user_data = await state.get_data()
+    user = User(chat_id=msg.chat.id, name=user_data['name'], \
+                forename=user_data['forename'], group=user_data['group'])
+    session.add(user)
+    session.commit()
+    await msg.answer(text.ending_registration)
+    
+    await state.clear()
+
+# Обработчик нажатия кнопки "Ежедневные задания"
+@router.message(Command("daily_tasks"))
+async def daily_tasks_handler(msg: Message, session):
+    await msg.answer("Вы выбрали ежедневные задания.")
+
+# обработчик нажатия кнопки "меню"
 @router.message(F.text == "меню")
 @router.message(F.text == "выйти в меню")
 @router.message(F.text == "◀️ выйти в меню")
-async def menu(msg: Message):
-    await msg.answer(text.menu, reply_markup=kb.menu)
+@router.message(F.text == "Меню")
+@router.message(F.text == "Выйти в меню")
+@router.message(F.text == "◀️ Выйти в меню")
+@router.message(Command('menu'))
+async def menu(msg: Message, session):
+    await msg.answer(text.start.format(name=msg.from_user.full_name), reply_markup=kb.menu)
 
+# обработчик сообщений
 @router.message()
-@flags.chat_action("typing")  # должен показывать "печатет..." А НЕ ПОКАЗЫВАЕТ
-async def generate_reply(msg: Message):
+async def generate_reply(msg: Message, session):
     prompt = msg.text
-    try:
-        generated_text = await utils.generate_text(prompt)
-        if generated_text:
-            # форматирование
-            formatted_text = f"```\n{generated_text}\n```"
-            await msg.answer(formatted_text, parse_mode="Markdown")  #  Markdown для блоков
-        else:
-            await msg.answer("К сожалению, я не смог сгенерировать ответ.", parse_mode="Markdown")
-    except Exception as e:
-        await msg.answer("Произошла ошибка при обработке сообщения.", parse_mode="Markdown")
-        print(f"Ошибка: {e}")
-
-
-'''
-# обработчик для нажатия на кнопку "Ежедневные задания" 
-@router.callback_query(F.data == "daily_tasks")
-async def daily_tasks_handler(callback_query: CallbackQuery):
-    user_id = callback_query.from_user.id
-
-    task = generate_daily_task()  
-    
-    # отправка задания
-    await callback_query.message.answer(task, reply_markup=kb.iexit_kb)
-   '''
+    generated_text = await generate_text_yand(prompt)
+    if generated_text:
+        await msg.answer(generated_text, parse_mode="Markdown")
+    else:
+        await msg.answer("К сожалению, я не смог сгенерировать ответ.")
