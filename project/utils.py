@@ -27,7 +27,7 @@ headers = {
     "x-folder-id": config.FOLDER_ID,
 }
 
-async def generate_text_yand(prompt: str):
+def generate_text_yand(prompt: str):
     # Добавляем новое сообщение от пользователя в историю
     message_history.append({"role": "user", "text": prompt})
     

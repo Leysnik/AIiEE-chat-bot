@@ -29,6 +29,9 @@ async def start_handler(msg: Message, session):
     
 @router.message(Command('register'), State(None))
 async def register_user(msg: Message, state: FSMContext, session):
+    if session.query(User).filter(User.chat_id == msg.chat.id).count() > 0:
+        await msg.answer(text.already_registered)
+        return
     await msg.answer(text.name_registration)
     await state.set_state(RegistrationForm.name)
 
@@ -86,13 +89,13 @@ async def tips_handler(msg: Message, session):
 # Обработчик нажатия кнопки "Ежедневные задания"
 @router.callback_query(F.data == 'daily_tasks')
 async def daily_tasks_handler(msg: Message, session):
-    res = await generate_daily_task()
+    res = generate_daily_task()
     await msg.message.answer(res)
 
 # Обработчик нажатия кнопки "Помощь"
 @router.callback_query(F.data == 'help')
 async def help_handler(msg: Message, session):
-    res = await generate_text_yand("Опиши очень коротко в паре предложений, что ты за бот")
+    res = generate_text_yand("Опиши очень коротко в паре предложений, что ты за бот")
     await msg.message.answer(res)
 
 # обработчик нажатия кнопки "меню"
@@ -111,7 +114,7 @@ async def menu(msg: Message, session):
 @router.message()
 async def generate_reply(msg: Message, session):
     prompt = msg.text
-    generated_text = await generate_text_yand(prompt)
+    generated_text = generate_text_yand(prompt)
     if generated_text:
         await msg.answer(generated_text)
     else:

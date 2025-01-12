@@ -2613,7 +2613,7 @@ TypeError: 'gender' is an invalid keyword argument for User
 2025-01-12 14:27:02,783 ERROR Cause exception while process update id=557046644 by bot id=7605816882
 IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: users.chat_id
 [SQL: INSERT INTO users (chat_id, name, forename, "group", daily_streak, daily_date, daily_total, games_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
-[parameters: (653243192, 'андрей', 'бабенко', 'бив234', 0, '2025-01-12 14:26:44.084782', 0, 0)]
+[parameters: (653243192, 'пїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅ234', 0, '2025-01-12 14:26:44.084782', 0, 0)]
 (Background on this error at: https://sqlalche.me/e/20/gkpj)
 Traceback (most recent call last):
   File "d:\TG_BOT\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1964, in _exec_single_context
@@ -2731,7 +2731,7 @@ Traceback (most recent call last):
     cursor.execute(statement, parameters)
 sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: users.chat_id
 [SQL: INSERT INTO users (chat_id, name, forename, "group", daily_streak, daily_date, daily_total, games_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
-[parameters: (653243192, 'андрей', 'бабенко', 'бив234', 0, '2025-01-12 14:26:44.084782', 0, 0)]
+[parameters: (653243192, 'пїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅ234', 0, '2025-01-12 14:26:44.084782', 0, 0)]
 (Background on this error at: https://sqlalche.me/e/20/gkpj)
 2025-01-12 14:34:16,442 INFO Update id=557046645 is handled. Duration 186 ms by bot id=7605816882
 2025-01-12 14:34:20,118 INFO Update id=557046646 is handled. Duration 140 ms by bot id=7605816882
@@ -2814,7 +2814,7 @@ AttributeError: module 'text' has no attribute 'start'
 2025-01-12 14:36:05,083 ERROR Cause exception while process update id=557046664 by bot id=7605816882
 IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: users.chat_id
 [SQL: INSERT INTO users (chat_id, name, forename, "group", daily_streak, daily_date, daily_total, games_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
-[parameters: (631449053, 'Никита', 'Трескин', 'Бив234', 0, '2025-01-12 14:35:42.711906', 0, 0)]
+[parameters: (631449053, 'пїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅ234', 0, '2025-01-12 14:35:42.711906', 0, 0)]
 (Background on this error at: https://sqlalche.me/e/20/gkpj)
 Traceback (most recent call last):
   File "d:\TG_BOT\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1964, in _exec_single_context
@@ -2932,14 +2932,14 @@ Traceback (most recent call last):
     cursor.execute(statement, parameters)
 sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: users.chat_id
 [SQL: INSERT INTO users (chat_id, name, forename, "group", daily_streak, daily_date, daily_total, games_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
-[parameters: (631449053, 'Никита', 'Трескин', 'Бив234', 0, '2025-01-12 14:35:42.711906', 0, 0)]
+[parameters: (631449053, 'пїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅ234', 0, '2025-01-12 14:35:42.711906', 0, 0)]
 (Background on this error at: https://sqlalche.me/e/20/gkpj)
 2025-01-12 14:36:06,052 INFO Update id=557046665 is handled. Duration 141 ms by bot id=7605816882
 2025-01-12 14:36:09,161 INFO Update id=557046666 is not handled. Duration 0 ms by bot id=7605816882
 2025-01-12 14:36:09,161 ERROR Cause exception while process update id=557046666 by bot id=7605816882
 IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: users.chat_id
 [SQL: INSERT INTO users (chat_id, name, forename, "group", daily_streak, daily_date, daily_total, games_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
-[parameters: (653243192, 'вася', 'петров', 'бив333', 0, '2025-01-12 14:35:42.711906', 0, 0)]
+[parameters: (653243192, 'пїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅ333', 0, '2025-01-12 14:35:42.711906', 0, 0)]
 (Background on this error at: https://sqlalche.me/e/20/gkpj)
 Traceback (most recent call last):
   File "d:\TG_BOT\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1964, in _exec_single_context
@@ -3057,7 +3057,7 @@ Traceback (most recent call last):
     cursor.execute(statement, parameters)
 sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: users.chat_id
 [SQL: INSERT INTO users (chat_id, name, forename, "group", daily_streak, daily_date, daily_total, games_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
-[parameters: (653243192, 'вася', 'петров', 'бив333', 0, '2025-01-12 14:35:42.711906', 0, 0)]
+[parameters: (653243192, 'пїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅ333', 0, '2025-01-12 14:35:42.711906', 0, 0)]
 (Background on this error at: https://sqlalche.me/e/20/gkpj)
 2025-01-12 14:36:34,061 INFO Update id=557046667 is handled. Duration 156 ms by bot id=7605816882
 2025-01-12 14:36:38,360 INFO Update id=557046668 is not handled. Duration 0 ms by bot id=7605816882
@@ -3126,7 +3126,7 @@ TypeError: object of type 'NoneType' has no len()
 2025-01-12 14:36:40,282 ERROR Cause exception while process update id=557046669 by bot id=7605816882
 IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: users.chat_id
 [SQL: INSERT INTO users (chat_id, name, forename, "group", daily_streak, daily_date, daily_total, games_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
-[parameters: (631449053, 'Никита', 'Трескин', 'Бив234', 0, '2025-01-12 14:35:42.711906', 0, 0)]
+[parameters: (631449053, 'пїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅ234', 0, '2025-01-12 14:35:42.711906', 0, 0)]
 (Background on this error at: https://sqlalche.me/e/20/gkpj)
 Traceback (most recent call last):
   File "d:\TG_BOT\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1964, in _exec_single_context
@@ -3244,7 +3244,7 @@ Traceback (most recent call last):
     cursor.execute(statement, parameters)
 sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: users.chat_id
 [SQL: INSERT INTO users (chat_id, name, forename, "group", daily_streak, daily_date, daily_total, games_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
-[parameters: (631449053, 'Никита', 'Трескин', 'Бив234', 0, '2025-01-12 14:35:42.711906', 0, 0)]
+[parameters: (631449053, 'пїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅ234', 0, '2025-01-12 14:35:42.711906', 0, 0)]
 (Background on this error at: https://sqlalche.me/e/20/gkpj)
 2025-01-12 14:37:11,686 INFO Start polling
 2025-01-12 14:37:11,739 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
@@ -3255,7 +3255,7 @@ sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed
 2025-01-12 14:37:20,415 ERROR Cause exception while process update id=557046677 by bot id=7605816882
 IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: users.chat_id
 [SQL: INSERT INTO users (chat_id, name, forename, "group", daily_streak, daily_date, daily_total, games_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
-[parameters: (653243192, 'иван', 'иванов', 'бив234', 0, '2025-01-12 14:37:11.315871', 0, 0)]
+[parameters: (653243192, 'пїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅ234', 0, '2025-01-12 14:37:11.315871', 0, 0)]
 (Background on this error at: https://sqlalche.me/e/20/gkpj)
 Traceback (most recent call last):
   File "d:\TG_BOT\.venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1964, in _exec_single_context
@@ -3373,7 +3373,7 @@ Traceback (most recent call last):
     cursor.execute(statement, parameters)
 sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: users.chat_id
 [SQL: INSERT INTO users (chat_id, name, forename, "group", daily_streak, daily_date, daily_total, games_total) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
-[parameters: (653243192, 'иван', 'иванов', 'бив234', 0, '2025-01-12 14:37:11.315871', 0, 0)]
+[parameters: (653243192, 'пїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅпїЅпїЅпїЅ', 'пїЅпїЅпїЅ234', 0, '2025-01-12 14:37:11.315871', 0, 0)]
 (Background on this error at: https://sqlalche.me/e/20/gkpj)
 2025-01-12 14:37:26,611 INFO Update id=557046678 is handled. Duration 93 ms by bot id=7605816882
 2025-01-12 14:37:29,775 INFO Update id=557046679 is handled. Duration 172 ms by bot id=7605816882
@@ -4401,3 +4401,4 @@ TypeError: 'gender' is an invalid keyword argument for User
 2025-01-12 17:11:59,347 INFO Update id=557046849 is handled. Duration 266 ms by bot id=7605816882
 2025-01-12 17:12:02,746 INFO Update id=557046850 is handled. Duration 171 ms by bot id=7605816882
 2025-01-12 17:12:05,426 INFO Update id=557046851 is handled. Duration 187 ms by bot id=7605816882
+
