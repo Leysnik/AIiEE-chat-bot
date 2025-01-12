@@ -4118,3 +4118,286 @@ aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't
 2025-01-12 16:15:59,024 INFO Update id=557046799 is handled. Duration 7063 ms by bot id=7605816882
 2025-01-12 16:16:02,973 INFO Update id=557046800 is handled. Duration 77 ms by bot id=7605816882
 2025-01-12 16:16:14,922 INFO Update id=557046801 is handled. Duration 4469 ms by bot id=7605816882
+2025-01-12 17:03:44,126 INFO Start polling
+2025-01-12 17:03:44,266 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-12 17:03:46,838 INFO Update id=557046815 is handled. Duration 500 ms by bot id=7605816882
+2025-01-12 17:03:48,915 INFO Update id=557046816 is handled. Duration 187 ms by bot id=7605816882
+2025-01-12 17:03:51,772 INFO Update id=557046817 is handled. Duration 155 ms by bot id=7605816882
+2025-01-12 17:03:53,978 INFO Update id=557046818 is handled. Duration 172 ms by bot id=7605816882
+2025-01-12 17:03:57,867 INFO Update id=557046819 is handled. Duration 157 ms by bot id=7605816882
+2025-01-12 17:04:03,463 INFO Update id=557046820 is handled. Duration 219 ms by bot id=7605816882
+2025-01-12 17:04:07,601 INFO Update id=557046821 is not handled. Duration 0 ms by bot id=7605816882
+2025-01-12 17:04:07,601 ERROR Cause exception while process update id=557046821 by bot id=7605816882
+KeyError: 'gender'
+Traceback (most recent call last):
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\main.py", line 38, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\handlers.py", line 75, in register_end
+    forename=user_data['forename'], gender=user_data['gender'], group=user_data['group'])
+                                          ~~~~~~~~~^^^^^^^^^^
+KeyError: 'gender'
+2025-01-12 17:06:05,411 INFO Start polling
+2025-01-12 17:06:05,551 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-12 17:06:21,055 INFO Update id=557046823 is handled. Duration 469 ms by bot id=7605816882
+2025-01-12 17:06:22,449 INFO Update id=557046824 is handled. Duration 155 ms by bot id=7605816882
+2025-01-12 17:06:25,620 INFO Update id=557046825 is handled. Duration 342 ms by bot id=7605816882
+2025-01-12 17:06:27,417 INFO Update id=557046826 is handled. Duration 156 ms by bot id=7605816882
+2025-01-12 17:06:30,347 INFO Update id=557046827 is handled. Duration 171 ms by bot id=7605816882
+2025-01-12 17:06:33,598 INFO Update id=557046828 is not handled. Duration 16 ms by bot id=7605816882
+2025-01-12 17:06:33,599 ERROR Cause exception while process update id=557046828 by bot id=7605816882
+KeyError: 'gender'
+Traceback (most recent call last):
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\main.py", line 38, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\handlers.py", line 75, in register_end
+    forename=user_data['forename'], gender=user_data['gender'], group=user_data['group'])
+                                          ~~~~~~~~~^^^^^^^^^^
+KeyError: 'gender'
+2025-01-12 17:07:57,495 INFO Start polling
+2025-01-12 17:07:57,633 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-12 17:07:59,370 INFO Update id=557046830 is handled. Duration 500 ms by bot id=7605816882
+2025-01-12 17:08:00,962 INFO Update id=557046831 is handled. Duration 265 ms by bot id=7605816882
+2025-01-12 17:08:05,314 INFO Update id=557046832 is handled. Duration 155 ms by bot id=7605816882
+2025-01-12 17:08:06,465 INFO Update id=557046833 is handled. Duration 141 ms by bot id=7605816882
+2025-01-12 17:08:10,224 INFO Update id=557046834 is handled. Duration 187 ms by bot id=7605816882
+2025-01-12 17:08:13,661 INFO Update id=557046835 is not handled. Duration 16 ms by bot id=7605816882
+2025-01-12 17:08:13,661 ERROR Cause exception while process update id=557046835 by bot id=7605816882
+KeyError: 'gender'
+Traceback (most recent call last):
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\main.py", line 38, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\handlers.py", line 75, in register_end
+    forename=user_data['forename'], gender=user_data['gender'], group=user_data['group'])
+                                          ~~~~~~~~~^^^^^^^^^^
+KeyError: 'gender'
+2025-01-12 17:10:17,248 INFO Start polling
+2025-01-12 17:10:17,393 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-12 17:10:20,296 INFO Update id=557046838 is handled. Duration 562 ms by bot id=7605816882
+2025-01-12 17:10:21,691 INFO Update id=557046839 is handled. Duration 280 ms by bot id=7605816882
+2025-01-12 17:10:23,587 INFO Update id=557046840 is handled. Duration 171 ms by bot id=7605816882
+2025-01-12 17:10:25,236 INFO Update id=557046841 is handled. Duration 157 ms by bot id=7605816882
+2025-01-12 17:10:28,848 INFO Update id=557046842 is handled. Duration 250 ms by bot id=7605816882
+2025-01-12 17:10:31,317 INFO Update id=557046843 is not handled. Duration 15 ms by bot id=7605816882
+2025-01-12 17:10:31,317 ERROR Cause exception while process update id=557046843 by bot id=7605816882
+TypeError: 'gender' is an invalid keyword argument for User
+Traceback (most recent call last):
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\main.py", line 38, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\handlers.py", line 74, in register_end
+    user = User(chat_id=msg.chat.id, name=user_data['name'], \
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 4, in __init__
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\state.py", line 571, in _initialize_instance
+    with util.safe_reraise():
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 146, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\state.py", line 569, in _initialize_instance
+    manager.original_init(*mixed[1:], **kwargs)
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\decl_base.py", line 2175, in _declarative_constructor
+    raise TypeError(
+TypeError: 'gender' is an invalid keyword argument for User
+2025-01-12 17:11:49,339 INFO Start polling
+2025-01-12 17:11:49,480 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-12 17:11:51,124 INFO Update id=557046845 is handled. Duration 608 ms by bot id=7605816882
+2025-01-12 17:11:52,365 INFO Update id=557046846 is handled. Duration 141 ms by bot id=7605816882
+2025-01-12 17:11:55,408 INFO Update id=557046847 is handled. Duration 187 ms by bot id=7605816882
+2025-01-12 17:11:56,888 INFO Update id=557046848 is handled. Duration 187 ms by bot id=7605816882
+2025-01-12 17:11:59,347 INFO Update id=557046849 is handled. Duration 266 ms by bot id=7605816882
+2025-01-12 17:12:02,746 INFO Update id=557046850 is handled. Duration 171 ms by bot id=7605816882
+2025-01-12 17:12:05,426 INFO Update id=557046851 is handled. Duration 187 ms by bot id=7605816882
