@@ -86,7 +86,7 @@ async def daily_tasks_handler(msg: Message, session):
 
 # Обработчик нажатия кнопки "Помощь"
 @router.callback_query(F.data == 'help')
-async def daily_tasks_handler(msg: Message, session):
+async def help_handler(msg: Message, session):
     res = generate_text_yand("Опиши очень коротко в паре предложений, что ты за бот")
     await msg.message.answer(res)
 
