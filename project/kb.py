@@ -8,6 +8,7 @@ menu = [
      InlineKeyboardButton(text="📚 Советы", callback_data="tips")],
     [InlineKeyboardButton(text="⚙️ Настройка сложности", callback_data="settings")],
     [InlineKeyboardButton(text="🏆 Соревнования", callback_data="challenges")],
+   # [InlineKeyboardButton(text="💬 Поговорить на любую тему", callback_data="conversation")],
     [InlineKeyboardButton(text="🔎 Помощь", callback_data="help")]
 ]
 menu = InlineKeyboardMarkup(inline_keyboard=menu)
@@ -17,3 +18,4 @@ exit_kb = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="◀️ Выйти 
 
 # инлайн-клавиатура для выхода в главное меню
 iexit_kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="◀️ Выйти в меню", callback_data="menu")]])
+
