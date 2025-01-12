@@ -11,9 +11,11 @@ from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram.fsm.state import State, StatesGroup
 
 from utils import generate_text_yand, validate_group, validate_name
+from daily_tasks import generate_daily_task
 from states import RegistrationForm
 import kb as kb
 import text
+from tips import tips
 from db import User
 
 
@@ -68,10 +70,22 @@ async def register_end(msg: Message, state: FSMContext, session):
     
     await state.clear()
 
+# Обработчик нажатия кнопки "Советы"
+@router.callback_query(F.data == 'tips')
+async def tips_handler(msg: Message, session):
+    await msg.message.answer(tips)
+
 # Обработчик нажатия кнопки "Ежедневные задания"
-@router.message(Command("daily_tasks"))
+@router.callback_query(F.data == 'daily_tasks')
 async def daily_tasks_handler(msg: Message, session):
-    await msg.answer("Вы выбрали ежедневные задания.")
+    res = await generate_daily_task()
+    await msg.message.answer(res)
+
+# Обработчик нажатия кнопки "Помощь"
+@router.callback_query(F.data == 'help')
+async def daily_tasks_handler(msg: Message, session):
+    res = await generate_text_yand("Опиши очень коротко в паре предложений, что ты за бот")
+    await msg.message.answer(res)
 
 # обработчик нажатия кнопки "меню"
 @router.message(F.text == "меню")
@@ -90,6 +104,6 @@ async def generate_reply(msg: Message, session):
     prompt = msg.text
     generated_text = await generate_text_yand(prompt)
     if generated_text:
-        await msg.answer(generated_text, parse_mode="Markdown")
+        await msg.answer(generated_text)
     else:
         await msg.answer("К сожалению, я не смог сгенерировать ответ.")
