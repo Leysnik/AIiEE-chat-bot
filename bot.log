@@ -1803,3 +1803,6 @@ aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't
 2025-01-12 13:16:04,568 WARNING Received SIGINT signal
 2025-01-12 13:16:04,569 INFO Polling stopped for bot @HSEMEMORYBOT id=7605816882 - 'UpgradeYourMemory'
 2025-01-12 13:16:04,569 INFO Polling stopped
+2025-01-12 16:38:07,750 INFO Start polling
+2025-01-12 16:38:07,910 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-12 16:38:19,535 INFO Update id=557046802 is handled. Duration 532 ms by bot id=7605816882

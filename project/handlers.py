@@ -30,6 +30,9 @@ async def start_handler(msg: Message, session):
     
 @router.message(Command('register'), State(None))
 async def register_user(msg: Message, state: FSMContext, session):
+    if session.query(User).filter(User.chat_id == msg.chat.id).count() > 0:
+        await msg.answer(text.already_registered)
+        return
     await msg.answer(text.name_registration)
     await state.set_state(RegistrationForm.name)
 
