@@ -53,7 +53,7 @@ async def register_ask_gender(msg: Message, state: FSMContext, session):
     await state.set_state(RegistrationForm.sex)
 
 @router.message(RegistrationForm.sex)
-async def register_ask_gender(msg: Message, state: FSMContext, session):
+async def register_ask_group(msg: Message, state: FSMContext, session):
     sex = msg.text.lower()
     if not sex in ['мужской', 'женский']:
         await msg.answer(text.error_registration)
