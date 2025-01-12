@@ -40,7 +40,7 @@ class DatabaseMiddleware(BaseMiddleware):
             await bot.send_message(chat_id=chat_id, text=text.signup.format(name=msg.from_user.full_name))
             
             
-bot = Bot(token=config.BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
+bot = Bot(token=config.BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN))
 dp = Dispatcher(storage=MemoryStorage())
 dp.include_router(router)
 dp.update.middleware(DatabaseMiddleware(session=make_session()))
