@@ -3,14 +3,13 @@ from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
 from aiogram import flags
 from aiogram.fsm.context import FSMContext
-#from aiogram.utils.markdown import pre
 import logging
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram.fsm.state import State, StatesGroup
 
-from utils import generate_text_yand, validate_group, validate_name
+from utils import generate_text_yand, validate_name, validate_group
 from daily_tasks import generate_daily_task
 from states import RegistrationForm
 import kb as kb
@@ -18,15 +17,15 @@ import text
 from tips import tips
 from db import User
 
-
 router = Router()
-        
+
 dp = Dispatcher(storage=MemoryStorage())
 
 # обработчик команды /start
 @router.message(CommandStart()) 
 async def start_handler(msg: Message, session):
     await msg.answer(text.greet.format(name=msg.from_user.full_name), reply_markup=kb.menu)
+    
     
 @router.message(Command('register'), State(None))
 async def register_user(msg: Message, state: FSMContext, session):
@@ -47,30 +46,39 @@ async def register_ask_forename(msg: Message, state: FSMContext, session):
     await state.set_state(RegistrationForm.forename)
 
 @router.message(RegistrationForm.forename)
-async def register_ask_group(msg: Message, state: FSMContext, session):
+async def register_ask_gender(msg: Message, state: FSMContext, session):
     forename = msg.text
     if not validate_name(forename):
         await msg.answer(text.error_registration)
         return
     await state.update_data(forename=forename)
-    await msg.answer(text.group_registration)
+    await msg.answer(text.gender_registration) 
+    await state.set_state(RegistrationForm.sex)
+
+@router.message(RegistrationForm.sex)
+async def register_ask_group(msg: Message, state: FSMContext, session):
+    sex = msg.text.lower()
+    if not sex in ['мужской', 'женский']:
+        await msg.answer(text.error_registration)
+        return
+    await state.update_data(sex=sex)
+    await msg.answer(text.group_registration) 
     await state.set_state(RegistrationForm.group)
 
 @router.message(RegistrationForm.group)
 async def register_end(msg: Message, state: FSMContext, session):
-    group = msg.text
-    if not validate_group(group):
+    group = msg.text.lower() 
+    if not validate_group(group): 
         await msg.answer(text.error_registration)
         return
     await state.update_data(group=group)
     
     user_data = await state.get_data()
     user = User(chat_id=msg.chat.id, name=user_data['name'], \
-                forename=user_data['forename'], group=user_data['group'])
+        forename=user_data['forename'], sex=user_data['sex'], group=user_data['group']) 
     session.add(user)
     session.commit()
     await msg.answer(text.ending_registration)
-    
     await state.clear()
 
 # Обработчик нажатия кнопки "Советы"
@@ -100,6 +108,7 @@ async def help_handler(msg: Message, session):
 @router.message(Command('menu'))
 async def menu(msg: Message, session):
     await msg.answer(text.start.format(name=msg.from_user.full_name), reply_markup=kb.menu)
+
 
 # обработчик сообщений
 @router.message()

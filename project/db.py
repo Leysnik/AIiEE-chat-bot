@@ -11,6 +11,7 @@ class User(Base):
     name = db.Column(db.Text)
     forename = db.Column(db.Text)
     group = db.Column(db.Text)
+    sex = db.Column(db.Text)
     daily_streak = db.Column(db.Integer, default=0)
     daily_date = db.Column(db.DateTime, default=datetime.now())
     daily_total = db.Column(db.Integer, default=0)
