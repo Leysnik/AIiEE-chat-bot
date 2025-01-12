@@ -1,7 +1,7 @@
 from utils import generate_text_yand
 
 # Функция для генерации задания
-async def generate_daily_task():
+def generate_daily_task():
     prompt = """
     Напиши задание для развития памяти. Задание должно включать:
 
@@ -14,6 +14,6 @@ async def generate_daily_task():
     Задание должно быть связано с развитием памяти, например, с упражнением на запоминание деталей.
     """
     
-    res = await generate_text_yand(prompt)
+    res = generate_text_yand(prompt)
 
     return res

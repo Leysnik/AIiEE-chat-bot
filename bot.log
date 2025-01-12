@@ -1806,3 +1806,8 @@ aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: can't
 2025-01-12 16:38:07,750 INFO Start polling
 2025-01-12 16:38:07,910 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
 2025-01-12 16:38:19,535 INFO Update id=557046802 is handled. Duration 532 ms by bot id=7605816882
+2025-01-12 16:43:26,703 INFO Start polling
+2025-01-12 16:43:26,892 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-12 16:43:53,972 INFO Update id=557046803 is handled. Duration 656 ms by bot id=7605816882
+2025-01-12 16:43:59,526 INFO Update id=557046804 is handled. Duration 1609 ms by bot id=7605816882
+2025-01-12 16:44:12,925 INFO Update id=557046805 is handled. Duration 2515 ms by bot id=7605816882
