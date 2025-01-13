@@ -4,14 +4,17 @@ from aiogram.types import Message, CallbackQuery
 from aiogram import flags
 from aiogram.fsm.context import FSMContext
 import logging
+from datetime import datetime, timedelta
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram.fsm.state import State, StatesGroup
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+import asyncio
 
 from utils import generate_text_yand, validate_name, validate_group
-from daily_tasks import generate_daily_task
-from states import RegistrationForm
+from daily_tasks import generate_daily_task, generate_words
+from states import RegistrationForm, GamesForm
 import kb as kb
 import text
 from tips import tips
@@ -20,6 +23,15 @@ from db import User
 router = Router()
 
 dp = Dispatcher(storage=MemoryStorage())
+
+@router.message(Command('stop')) 
+async def start_handler(msg: Message, session, state: FSMContext):
+    if state is None:
+        await msg.answer(text.error_state)
+        return
+    else:
+        await msg.answer(text.stop_state)
+    await state.clear()
 
 # обработчик команды /start
 @router.message(CommandStart()) 
@@ -87,10 +99,47 @@ async def tips_handler(msg: Message, session):
     await msg.message.answer(tips)
 
 # Обработчик нажатия кнопки "Ежедневные задания"
-@router.callback_query(F.data == 'daily_tasks')
-async def daily_tasks_handler(msg: Message, session):
-    res = generate_daily_task()
-    await msg.message.answer(res)
+@router.callback_query(F.data == 'daily_tasks', State(None))
+async def daily_tasks_handler(call: CallbackQuery, state: FSMContext, session):
+    res = generate_words()
+    await state.set_state(GamesForm.keys)
+    await state.update_data(keys=res)
+    message = await call.message.answer(text.game_msg.format(words=res))
+    await run_game(message, state)
+
+async def run_game(message: Message, state):
+    await asyncio.sleep(30)
+    await message.bot.edit_message_text(
+        text=text.game_msg.format(words=''),
+        chat_id=message.chat.id,
+        message_id=message.message_id
+    )
+    await state.set_state(GamesForm.answers)
+    await message.answer(text.start_game)
+
+@router.message(GamesForm.answers)
+async def game_answers_handler(msg: Message, state: FSMContext, session):
+    words = msg.text.split()
+    keys = await state.get_value('keys')
+    stats = await state.get_value('stats', 0)
+    upd_stats = 0
+    for word in words:
+        if word in keys:
+            keys.remove(word)
+            upd_stats += 1
+    
+    if upd_stats > 0:
+        await state.update_data(stats=stats+upd_stats)
+        await msg.answer(text.game_correct_word)
+    else:
+        await msg.answer(text.game_wrong_words)
+    
+    if len(keys) == 0:
+        await msg.answer(text.game_victory)
+        await state.clear()
+    else:
+        await state.update_data(keys=keys)
+
 
 # Обработчик нажатия кнопки "Помощь"
 @router.callback_query(F.data == 'help')

@@ -6,6 +6,10 @@ class RegistrationForm(StatesGroup):
     group = State()
     sex = State()
 
+class GamesForm(StatesGroup):
+    keys = State()
+    answers = State()
+
 def check_registration_state(state):
     return RegistrationForm.name.state == state or \
            RegistrationForm.forename.state == state or \

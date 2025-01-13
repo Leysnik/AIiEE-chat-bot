@@ -32,7 +32,7 @@ class DatabaseMiddleware(BaseMiddleware):
         current_state = await data.get('state').get_state()
         
         if session.query(User).filter(User.chat_id == chat_id).count() > 0 or \
-           msg.text == '/register' or check_registration_state(current_state):
+           msg.text == '/register' or msg.text == '/stop' or check_registration_state(current_state):
             with session as session:
                 data['session'] = session
                 return await handler(event, data)

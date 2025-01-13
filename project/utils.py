@@ -48,7 +48,6 @@ def generate_text_yand(prompt: str):
         return "Произошла ошибка при получении ответа."
     
     
-
 def validate_name(name):
     return name.isalpha()
 

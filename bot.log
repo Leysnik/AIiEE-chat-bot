@@ -4402,3 +4402,434 @@ TypeError: 'gender' is an invalid keyword argument for User
 2025-01-12 17:12:02,746 INFO Update id=557046850 is handled. Duration 171 ms by bot id=7605816882
 2025-01-12 17:12:05,426 INFO Update id=557046851 is handled. Duration 187 ms by bot id=7605816882
 
+2025-01-12 20:39:22,035 INFO Start polling
+2025-01-12 20:39:22,263 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-12 20:42:32,163 INFO Update id=557046888 is not handled. Duration 32 ms by bot id=7605816882
+2025-01-12 20:42:32,164 ERROR Cause exception while process update id=557046888 by bot id=7605816882
+OperationalError: (sqlite3.OperationalError) no such column: users.sex
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT users.chat_id AS users_chat_id, users.name AS users_name, users.forename AS users_forename, users."group" AS users_group, users.sex AS users_sex, users.daily_streak AS users_daily_streak, users.daily_date AS users_daily_date, users.daily_total AS users_daily_total, users.games_total AS users_games_total 
+FROM users 
+WHERE users.chat_id = ?) AS anon_1]
+[parameters: (631449053,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Traceback (most recent call last):
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: users.sex
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\main.py", line 34, in __call__
+    if session.query(User).filter(User.chat_id == chat_id).count() > 0 or \
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 3142, in count
+    self._legacy_from_self(col).enable_eagerloads(False).scalar()
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2831, in scalar
+    ret = self.one()
+          ^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2804, in one
+    return self._iter().one()  # type: ignore
+           ^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2853, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2365, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\context.py", line 305, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: users.sex
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT users.chat_id AS users_chat_id, users.name AS users_name, users.forename AS users_forename, users."group" AS users_group, users.sex AS users_sex, users.daily_streak AS users_daily_streak, users.daily_date AS users_daily_date, users.daily_total AS users_daily_total, users.games_total AS users_games_total 
+FROM users 
+WHERE users.chat_id = ?) AS anon_1]
+[parameters: (631449053,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-01-12 20:42:42,652 INFO Update id=557046889 is not handled. Duration 0 ms by bot id=7605816882
+2025-01-12 20:42:42,652 ERROR Cause exception while process update id=557046889 by bot id=7605816882
+OperationalError: (sqlite3.OperationalError) no such column: users.sex
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT users.chat_id AS users_chat_id, users.name AS users_name, users.forename AS users_forename, users."group" AS users_group, users.sex AS users_sex, users.daily_streak AS users_daily_streak, users.daily_date AS users_daily_date, users.daily_total AS users_daily_total, users.games_total AS users_games_total 
+FROM users 
+WHERE users.chat_id = ?) AS anon_1]
+[parameters: (631449053,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Traceback (most recent call last):
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+sqlite3.OperationalError: no such column: users.sex
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\main.py", line 34, in __call__
+    if session.query(User).filter(User.chat_id == chat_id).count() > 0 or \
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 3142, in count
+    self._legacy_from_self(col).enable_eagerloads(False).scalar()
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2831, in scalar
+    ret = self.one()
+          ^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2804, in one
+    return self._iter().one()  # type: ignore
+           ^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2853, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2365, in execute
+    return self._execute_internal(
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2251, in _execute_internal
+    result: Result[Any] = compile_state_cls.orm_execute_statement(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\orm\context.py", line 305, in orm_execute_statement
+    result = conn.execute(
+             ^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1416, in execute
+    return meth(
+           ^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\sql\elements.py", line 515, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1638, in _execute_clauseelement
+    ret = self._execute_context(
+          ^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1843, in _execute_context
+    return self._exec_single_context(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1983, in _exec_single_context
+    self._handle_dbapi_exception(
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2352, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 1964, in _exec_single_context
+    self.dialect.do_execute(
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 942, in do_execute
+    cursor.execute(statement, parameters)
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such column: users.sex
+[SQL: SELECT count(*) AS count_1 
+FROM (SELECT users.chat_id AS users_chat_id, users.name AS users_name, users.forename AS users_forename, users."group" AS users_group, users.sex AS users_sex, users.daily_streak AS users_daily_streak, users.daily_date AS users_daily_date, users.daily_total AS users_daily_total, users.games_total AS users_games_total 
+FROM users 
+WHERE users.chat_id = ?) AS anon_1]
+[parameters: (631449053,)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2025-01-12 20:44:18,122 INFO Start polling
+2025-01-12 20:44:18,323 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-12 20:44:22,752 INFO Update id=557046890 is handled. Duration 796 ms by bot id=7605816882
+2025-01-12 20:44:24,789 INFO Update id=557046891 is handled. Duration 141 ms by bot id=7605816882
+2025-01-12 20:44:27,923 INFO Update id=557046892 is handled. Duration 203 ms by bot id=7605816882
+2025-01-12 20:44:29,709 INFO Update id=557046893 is handled. Duration 140 ms by bot id=7605816882
+2025-01-12 20:44:33,417 INFO Update id=557046894 is handled. Duration 172 ms by bot id=7605816882
+2025-01-12 20:44:36,294 INFO Update id=557046895 is handled. Duration 281 ms by bot id=7605816882
+2025-01-12 20:44:41,069 INFO Update id=557046896 is handled. Duration 140 ms by bot id=7605816882
+2025-01-12 20:44:57,417 INFO Update id=557046897 is handled. Duration 9937 ms by bot id=7605816882
+2025-01-12 20:49:00,004 INFO Start polling
+2025-01-12 20:49:00,169 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-12 20:49:19,110 INFO Update id=557046898 is not handled. Duration 47 ms by bot id=7605816882
+2025-01-12 20:49:19,110 ERROR Cause exception while process update id=557046898 by bot id=7605816882
+AttributeError: module 'text' has no attribute 'start'
+Traceback (most recent call last):
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\main.py", line 38, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\handlers.py", line 110, in menu
+    await msg.answer(text.start.format(name=msg.from_user.full_name), reply_markup=kb.menu)
+                     ^^^^^^^^^^
+AttributeError: module 'text' has no attribute 'start'
+2025-01-12 20:49:24,754 INFO Update id=557046899 is handled. Duration 483 ms by bot id=7605816882
+2025-01-12 20:49:27,076 INFO Update id=557046900 is not handled. Duration 15 ms by bot id=7605816882
+2025-01-12 20:49:27,077 ERROR Cause exception while process update id=557046900 by bot id=7605816882
+AttributeError: module 'text' has no attribute 'start'
+Traceback (most recent call last):
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\main.py", line 38, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\handlers.py", line 110, in menu
+    await msg.answer(text.start.format(name=msg.from_user.full_name), reply_markup=kb.menu)
+                     ^^^^^^^^^^
+AttributeError: module 'text' has no attribute 'start'
+2025-01-12 20:49:28,905 INFO Update id=557046901 is handled. Duration 171 ms by bot id=7605816882
+2025-01-12 20:49:41,906 INFO Update id=557046902 is handled. Duration 9203 ms by bot id=7605816882
+2025-01-12 20:50:26,147 INFO Update id=557046903 is handled. Duration 10843 ms by bot id=7605816882
+2025-01-13 09:44:27,041 INFO Start polling
+2025-01-13 09:44:27,191 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-13 09:44:55,989 INFO Update id=557046905 is handled. Duration 1437 ms by bot id=7605816882
+2025-01-13 09:45:46,833 INFO Update id=557046906 is handled. Duration 1265 ms by bot id=7605816882
+2025-01-13 09:45:59,323 INFO Update id=557046907 is handled. Duration 2717 ms by bot id=7605816882
+2025-01-13 09:46:02,726 INFO Update id=557046908 is handled. Duration 1312 ms by bot id=7605816882
+2025-01-13 09:47:05,785 INFO Update id=557046909 is handled. Duration 8046 ms by bot id=7605816882
+2025-01-13 10:08:24,007 INFO Start polling
+2025-01-13 10:08:24,151 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-13 10:08:37,037 INFO Update id=557046911 is handled. Duration 578 ms by bot id=7605816882
+2025-01-13 10:08:39,297 INFO Update id=557046912 is handled. Duration 1000 ms by bot id=7605816882
+2025-01-13 10:11:40,988 INFO Polling stopped
+2025-01-13 10:11:41,250 INFO Polling stopped for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-13 10:25:57,095 INFO Start polling
+2025-01-13 10:25:57,242 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-13 10:26:04,161 INFO Update id=557046913 is handled. Duration 1562 ms by bot id=7605816882
+2025-01-13 10:26:22,330 INFO Update id=557046914 is handled. Duration 1140 ms by bot id=7605816882
+2025-01-13 10:27:52,062 INFO Start polling
+2025-01-13 10:27:52,219 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-13 10:28:00,737 INFO Update id=557046915 is handled. Duration 1282 ms by bot id=7605816882
+2025-01-13 10:28:07,650 INFO Update id=557046916 is handled. Duration 2907 ms by bot id=7605816882
+2025-01-13 10:30:25,573 INFO Start polling
+2025-01-13 10:30:25,714 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-13 10:30:33,023 INFO Update id=557046918 is handled. Duration 687 ms by bot id=7605816882
+2025-01-13 10:30:35,056 INFO Update id=557046919 is handled. Duration 875 ms by bot id=7605816882
+2025-01-13 10:30:39,540 INFO Update id=557046920 is handled. Duration 1359 ms by bot id=7605816882
+2025-01-13 10:31:52,477 INFO Start polling
+2025-01-13 10:31:52,629 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-13 10:31:56,617 INFO Update id=557046921 is handled. Duration 1532 ms by bot id=7605816882
+2025-01-13 10:32:01,278 INFO Update id=557046922 is handled. Duration 250 ms by bot id=7605816882
+2025-01-13 10:32:09,063 INFO Update id=557046923 is handled. Duration 155 ms by bot id=7605816882
+2025-01-13 10:34:18,908 INFO Start polling
+2025-01-13 10:34:19,060 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-13 10:34:23,680 INFO Update id=557046924 is handled. Duration 1453 ms by bot id=7605816882
+2025-01-13 10:34:26,228 INFO Update id=557046925 is handled. Duration 171 ms by bot id=7605816882
+2025-01-13 10:34:29,193 INFO Update id=557046926 is handled. Duration 140 ms by bot id=7605816882
+2025-01-13 10:34:49,776 INFO Update id=557046927 is handled. Duration 187 ms by bot id=7605816882
+2025-01-13 10:34:51,979 INFO Update id=557046928 is handled. Duration 157 ms by bot id=7605816882
+2025-01-13 10:34:56,013 INFO Update id=557046929 is handled. Duration 421 ms by bot id=7605816882
+2025-01-13 10:35:59,163 INFO Start polling
+2025-01-13 10:35:59,303 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-13 10:36:24,211 INFO Update id=557046930 is handled. Duration 1655 ms by bot id=7605816882
+2025-01-13 10:36:27,564 INFO Update id=557046931 is handled. Duration 250 ms by bot id=7605816882
+2025-01-13 10:36:30,397 INFO Update id=557046932 is handled. Duration 155 ms by bot id=7605816882
+2025-01-13 10:43:00,828 INFO Start polling
+2025-01-13 10:43:00,965 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-13 10:43:03,465 INFO Update id=557046934 is handled. Duration 656 ms by bot id=7605816882
+2025-01-13 10:43:05,586 INFO Update id=557046935 is handled. Duration 858 ms by bot id=7605816882
+2025-01-13 10:43:13,316 INFO Update id=557046936 is handled. Duration 202 ms by bot id=7605816882
+2025-01-13 10:43:18,074 INFO Update id=557046937 is handled. Duration 155 ms by bot id=7605816882
+2025-01-13 10:43:44,287 INFO Update id=557046938 is handled. Duration 312 ms by bot id=7605816882
+2025-01-13 10:57:21,662 INFO Start polling
+2025-01-13 10:57:21,818 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-13 11:04:56,586 INFO Start polling
+2025-01-13 11:04:56,733 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-13 11:05:25,963 INFO Update id=557046940 is handled. Duration 733 ms by bot id=7605816882
+2025-01-13 11:05:27,962 INFO Update id=557046941 is not handled. Duration 1016 ms by bot id=7605816882
+2025-01-13 11:05:27,963 ERROR Cause exception while process update id=557046941 by bot id=7605816882
+TypeError: run_game() missing 1 required positional argument: 'state'
+Traceback (most recent call last):
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 56, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\main.py", line 38, in __call__
+    return await handler(event, data)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 174, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 146, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 141, in _wrapped
+    return await self._propagate_event(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\router.py", line 166, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "d:\MIEM\bot\AIiEE-chat-bot\venv\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+           ^^^^^^^^^^^^^^^
+  File "D:\MIEM\bot\AIiEE-chat-bot\project\handlers.py", line 108, in daily_tasks_handler
+    await run_game(message)
+          ^^^^^^^^^^^^^^^^^
+TypeError: run_game() missing 1 required positional argument: 'state'
+2025-01-13 11:06:54,188 INFO Start polling
+2025-01-13 11:06:54,334 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-13 11:07:07,412 INFO Update id=557046942 is handled. Duration 6859 ms by bot id=7605816882
+2025-01-13 11:11:23,298 INFO Start polling
+2025-01-13 11:11:23,446 INFO Run polling for bot @HSEMEMORYBOT id=7605816882 - 'TaskMaster'
+2025-01-13 11:11:32,022 INFO Update id=557046943 is handled. Duration 7030 ms by bot id=7605816882
