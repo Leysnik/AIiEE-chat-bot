@@ -102,6 +102,9 @@ async def tips_handler(msg: Message, session):
 @router.callback_query(F.data == 'daily_tasks', State(None))
 async def daily_tasks_handler(call: CallbackQuery, state: FSMContext, session):
     res = generate_words()
+    if res is None:
+        await call.message.answer(text.generate_error)
+        return
     await state.set_state(GamesForm.keys)
     await state.update_data(keys=res)
     message = await call.message.answer(text.game_msg.format(words=res))
@@ -145,6 +148,9 @@ async def game_answers_handler(msg: Message, state: FSMContext, session):
 @router.callback_query(F.data == 'help')
 async def help_handler(msg: Message, session):
     res = generate_text_yand("Опиши очень коротко в паре предложений, что ты за бот", msg.chat.id)
+    if res is None:
+        await msg.answer(text.generate_error)
+        return
     await msg.message.answer(res)
 
 # обработчик нажатия кнопки "меню"
@@ -167,4 +173,4 @@ async def generate_reply(msg: Message, session):
     if generated_text:
         await msg.answer(generated_text)
     else:
-        await msg.answer("К сожалению, я не смог сгенерировать ответ.")
+        await msg.answer(text.generate_error)

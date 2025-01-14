@@ -28,6 +28,8 @@ def generate_words():
     prompt = '''Составь 10 слов для интерактивного задания с ботом(эти слова не должны быть связаны нормами языка, просто 10 слов).
                Не используй знаки препинания, должны быть только слова, отделенные пробелом.
     '''
-    
-    words = generate_text_yand(prompt).split()
+    content = generate_text_yand(prompt)
+    if content is None:
+        return None
+    words = content.split()
     return words
