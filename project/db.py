@@ -16,7 +16,17 @@ class User(Base):
     daily_date = db.Column(db.DateTime, default=datetime.now())
     daily_total = db.Column(db.Integer, default=0)
     games_total = db.Column(db.Integer, default=0)          
+
+class History(Base):
+    __tablename__ = 'history'
+    id = db.Column(db.Integer, primary_key=True)
+    chat_id = db.Column(db.Integer, nullable=False)
+    name = db.Column(db.Text)
+    username = db.Column(db.Text)
+    type = db.Column(db.Text)
+    text = db.Column(db.Text)
     
+
 def make_session():
     engine = db.create_engine('sqlite:///AIIEE.db')
     Base.metadata.create_all(engine)

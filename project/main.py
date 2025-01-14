@@ -11,7 +11,7 @@ from typing import Any, Awaitable, Callable, Dict
 
 import config
 from handlers import router
-from db import make_session, User
+from db import make_session, User, History
 import text
 from states import check_registration_state
 
@@ -28,11 +28,23 @@ class DatabaseMiddleware(BaseMiddleware):
         
         chat_id = data['event_context'].chat.id
         session = self.session
-        msg = event.message
         current_state = await data.get('state').get_state()
-        
+        msg = event.message
+        callback = event.callback_query
+        text_ = None
+        type = 'other'
+        if not msg is None:
+            text_ = msg.text
+            type = 'text'
+        if not callback is None:
+            text_ = callback.data
+            type = 'callback'
+        history = History(chat_id=chat_id, name=f'{data['event_context'].chat.first_name} {data['event_context'].chat.last_name}',
+                          username=data['event_context'].chat.username, text=text_, type=type)
+        session.add(history)
+        session.commit()
         if session.query(User).filter(User.chat_id == chat_id).count() > 0 or \
-           msg.text == '/register' or msg.text == '/stop' or check_registration_state(current_state):
+           text_ in ['/register', '/stop'] or check_registration_state(current_state):
             with session as session:
                 data['session'] = session
                 return await handler(event, data)
