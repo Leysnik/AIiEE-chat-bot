@@ -1,5 +1,5 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardButton, ReplyKeyboardMarkup
-
+from aiogram.utils.keyboard import ReplyKeyboardBuilder
 # главное меню
 menu = [
     [InlineKeyboardButton(text="📝 Ежедневные задания", callback_data="daily_tasks"),
@@ -18,4 +18,13 @@ exit_kb = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="◀️ Выйти 
 
 # инлайн-клавиатура для выхода в главное меню
 iexit_kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="◀️ Выйти в меню", callback_data="menu")]])
+
+def generate_keyboard_markup(names):
+    builder = ReplyKeyboardBuilder()
+    for name in names:
+        builder.button(text=name)
+    builder.adjust(2)
+    markup = builder.as_markup()
+    return markup
+    
 

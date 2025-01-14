@@ -24,11 +24,11 @@ def generate_daily_task():
 
     return res
 
-def generate_words():
-    prompt = '''Составь 10 слов для интерактивного задания с ботом(эти слова не должны быть связаны нормами языка, просто 10 слов).
+def generate_words(count):
+    prompt = '''Составь {count} слов для интерактивного задания с ботом(эти слова не должны быть связаны нормами языка, просто {count} слов).
                Не используй знаки препинания, должны быть только слова, отделенные пробелом.
     '''
-    content = generate_text_yand(prompt)
+    content = generate_text_yand(prompt.format(count=count))
     if content is None:
         return None
     words = content.split()
