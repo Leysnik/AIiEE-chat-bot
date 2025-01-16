@@ -18,7 +18,6 @@ from states import RegistrationForm, GamesForm
 import kb
 from kb import generate_keyboard_markup
 import text
-from db import User, update_daily_user_stats
 
 router = Router()
 
@@ -67,7 +66,8 @@ async def send_notifications(bot, session):
     :param bot: объект бота для отправки сообщений
     :param session: сессия для работы с базой данных
     """
-    users = session.query(User).all()
+    session.upadate_daily_streak()
+    users = session.get_users() 
     for user in users:
         try:
             await bot.send_message(user.chat_id, "надо пройти ежедневное задание!")
@@ -96,7 +96,7 @@ async def register_user(msg: Message, state: FSMContext, session):
     :param state: состояние FSM для отслеживания этапов регистрации
     :param session: сессия для работы с базой данных
     """
-    if session.query(User).filter(User.chat_id == msg.chat.id).count() > 0:
+    if session.contains_user(msg.chat.id):
         await msg.answer(text.already_registered)
         return
     await msg.answer(text.name_registration)
@@ -165,10 +165,8 @@ async def register_end(msg: Message, state: FSMContext, session):
     await state.update_data(group=group)
 
     user_data = await state.get_data()
-    user = User(chat_id=msg.chat.id, name=user_data['name'], \
+    session.commit_user(chat_id=msg.chat.id, name=user_data['name'], \
         forename=user_data['forename'], sex=user_data['sex'], group=user_data['group'])
-    session.add(user)
-    session.commit()
     await msg.answer(text.ending_registration)
     await state.clear()
 
@@ -228,8 +226,9 @@ async def daily_tasks_handler(call: CallbackQuery, state: FSMContext, session):
     :param state: состояние FSM
     :param session: сессия для работы с базой данных
     """
-    if session.query(User).filter(User.chat_id == call.message.chat.id).one().daily_complete == 1:
+    if session.user_completed_daily(call.message.chat.id):
         await call.message.answer(text.already_completed_daily)
+        return
     words = generate_words(5)
     incorrect_words = generate_words(5)
     if words is None or incorrect_words is None:
@@ -284,12 +283,12 @@ async def game_answers_handler(msg: Message, state: FSMContext, session):
 
     await state.update_data(keys=keys, attempts=attempts, stats=stats)
     if len(keys) != 0 and attempts == 0:
-        update_daily_user_stats(session, msg.chat.id, stats)
+        session.update_daily_user_stats(msg.chat.id, stats)
         await msg.answer(text.game_doubt.format(count=stats), reply_markup=ReplyKeyboardRemove())
         await state.clear()
         return
     if len(keys) == 0:
-        update_daily_user_stats(session, msg.chat.id, stats)
+        session.update_daily_user_stats(msg.chat.id, stats)
         await msg.answer(text.game_victory, reply_markup=ReplyKeyboardRemove())
         await state.clear()
 
