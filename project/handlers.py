@@ -356,7 +356,7 @@ async def handle_answer(msg: types.Message, state: FSMContext):
     game_data = await state.get_data()
     correct_answer = game_data.get("correct_answer")
 
-    prompt = f"Пользователь ответил на загадку: {user_answer}. Ответ правильный?"
+    prompt = f"Пользователь ответил на загадку: {user_answer}. Ответ правильный? Принимай ответ если он почти верный"
     response = generate_text_yand(prompt)
     
     if response and 'правильно' in response.lower():
