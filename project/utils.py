@@ -1,6 +1,7 @@
 import logging
 import requests
 import config
+import re
 
 # URL для API
 URL = "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
@@ -88,17 +89,9 @@ def generate_text_yand(prompt: str, user='system'):
 Если запрос выполнен успешно (код 200), то возвращается сгенерированный текст. В случае ошибки выводится код ошибки
 """
 
-def validate_name(name):
-    """
-    Функция для проверки, состоит ли имя только из букв
-    
-    Аргументы:
-        name (str): Имя для проверки
-    
-    Возвращает:
-        bool: True, если имя состоит только из букв, иначе False
-    """
-    return name.isalpha()
+def validate_name(name: str) -> bool:
+    # Проверка, что имя состоит только из букв и не пустое
+    return bool(re.match(r'^[A-Za-zА-Яа-яЁё]+$', name)) and len(name) > 1
 
 def validate_group(group):
     """
@@ -111,3 +104,6 @@ def validate_group(group):
         bool: True, если группа состоит из 6 символов, где первые 3 — буквы, а последние 3 — цифры
     """
     return len(group) == 6 and group[:3].isalpha() and group[3:].isdigit()
+
+def validate_sex(sex: str) -> bool:
+    return sex.lower() in ['мужской', 'женский', 'male', 'female', 'муж', 'жен']

@@ -16,6 +16,7 @@ class RegistrationForm(StatesGroup):
     forename = State()    # Состояние для ввода фамилии пользователя
     group = State()       # Состояние для ввода группы пользователя
     sex = State()         # Состояние для ввода пола пользователя
+    notification_time = State()
 
 class GamesForm(StatesGroup):
     """
@@ -42,7 +43,10 @@ def check_registration_state(state):
     Возвращает:
         bool: True, если текущее состояние относится к регистрации, иначе False
     """
-    return RegistrationForm.name.state == state or \
-           RegistrationForm.forename.state == state or \
-           RegistrationForm.group.state == state or \
-           RegistrationForm.sex.state == state
+    return state in [
+        RegistrationForm.name.state,
+        RegistrationForm.forename.state,
+        RegistrationForm.group.state,
+        RegistrationForm.sex.state
+    ]
+

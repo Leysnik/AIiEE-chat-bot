@@ -19,6 +19,7 @@ class User(Base):
         daily_total (int): Общее количество очков за выполнение заданий
         daily_complete (bool): Статус выполнения задания на текущий день
         games_total (int): Общее количество игр пользователя
+        notification_time (time): время, в которое отправляются ежедневные уведомления
     """
     __tablename__ = 'users'
     chat_id = db.Column(db.Integer, nullable=False, primary_key=True, autoincrement=False)
@@ -31,6 +32,7 @@ class User(Base):
     daily_total = db.Column(db.Integer, default=0)
     daily_complete = db.Column(db.Boolean, default=0)
     games_total = db.Column(db.Integer, default=0)
+    notification_time = db.Column( db.Time, nullable=True)
 
 class History(Base):
     """

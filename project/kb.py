@@ -2,17 +2,17 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, KeyboardBu
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 # Главное меню
-menu = [
+menu = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="📝 Ежедневные задания", callback_data="daily_tasks"),
      InlineKeyboardButton(text="🎮 Мини-игры", callback_data="mini_games")],
     [InlineKeyboardButton(text="📈 Прогресс", callback_data="progress"),
      InlineKeyboardButton(text="📚 Советы", callback_data="tips")],
     [InlineKeyboardButton(text="⚙️ Настройка сложности", callback_data="settings")],
     [InlineKeyboardButton(text="🏆 Соревнования", callback_data="challenges")],
-   # [InlineKeyboardButton(text="💬 Поговорить на любую тему", callback_data="conversation")],
+    [InlineKeyboardButton(text="⏰ Установить время уведомлений", callback_data="choose_time")],
     [InlineKeyboardButton(text="🔎 Помощь", callback_data="help")]
-]
-menu = InlineKeyboardMarkup(inline_keyboard=menu)
+])
+#menu = InlineKeyboardMarkup(inline_keyboard=menu)
 """
 Главное меню бота с кнопками для различных разделов, таких как:
     - Ежедневные задания
@@ -25,7 +25,6 @@ menu = InlineKeyboardMarkup(inline_keyboard=menu)
 
 Каждая кнопка привязана к определенному callback_data, который будет использован для обработки действий пользователя
 """
-
 # Клавиатура для выхода в главное меню
 exit_kb = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="◀️ Выйти в меню")]], resize_keyboard=True)
 """
