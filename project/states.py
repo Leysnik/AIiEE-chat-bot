@@ -31,7 +31,7 @@ class GamesForm(StatesGroup):
     """
     keys = State()         # Состояние для ввода ключевых слов игры
     answers = State()      # Состояние для ввода ответов на вопросы
-    sequence_game = State()  # Состояние для игры с последовательностью
+    answering = State()  # Состояние для игры с последовательностью
 
 def check_registration_state(state):
     """

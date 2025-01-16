@@ -8,12 +8,11 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.filters import CommandStart, Command
 from aiogram.fsm.state import State
 import asyncio
-
 from aiogram.types import Message
 from aiogram.filters import Command
-from aiogram.filters.state import StateFilter
+from aiogram import types
 
-from utils import generate_text_yand, validate_name, validate_group, validate_sex
+from utils import generate_text_yand, validate_name, validate_group
 from daily_tasks import generate_words
 from states import RegistrationForm, GamesForm
 import kb
@@ -215,7 +214,7 @@ async def help_handler(callback: Message):
     Обработчик нажатия кнопки "Помощь". Отправляет пользователю информацию о боте
     :param callback: объект обратного вызова от кнопки
     """
-    res = generate_text_yand("напиши в паре предложений, что ты за бот", callback.message.chat.id)
+    res = generate_text_yand("напиши в паре предложений, что ты за бот. добавь что в твоём функционале есть ежедневные задания, ты можешь давать советы", callback.message.chat.id)
     if res is None:
         await callback.answer(text.generate_error)
         return
@@ -294,6 +293,104 @@ async def game_answers_handler(msg: Message, state: FSMContext, session):
         await msg.answer(text.game_victory, reply_markup=ReplyKeyboardRemove())
         await state.clear()
 
+
+# Обработчик команды /start_riddle
+@router.message(Command('start_riddle'))
+async def start_riddle_game(message: types.Message, state: FSMContext):
+    """
+    Обработчик команды /start_riddle для начала игры с загадками
+    """
+    prompt = "Придумай лёгкую загадку и дай на неё правильный ответ. Требуется чтобы ответ на загадку состоял из одного слова. ."
+    response = generate_text_yand(prompt)  
+
+    # Здесь предполагается, что нейросеть формирует ответ в формате "Загадка: [загадка], Ответ: [ответ]"
+    if "Ответ:" in response:
+        question, correct_answer = response.split("Ответ:", 1)
+        question = question.strip()
+        correct_answer = correct_answer.strip()
+    else:
+        question = response
+        correct_answer = "Неизвестный ответ" 
+
+    await state.update_data(current_question=question, correct_answer=correct_answer)
+
+    await message.answer(f"Загадка: {question}\nПопробуйте ответить!")
+
+    await state.set_state(GamesForm.answering)
+
+# Обработчик для получения ответа на загадку
+@router.message(GamesForm.answering)
+async def handle_answer(msg: types.Message, state: FSMContext):
+    """
+    Обрабатывает ответ игрока, проверяя его правильность
+    :param msg: сообщение с ответом игрока
+    :param state: состояние FSM
+    """
+    user_answer = msg.text.strip().lower()
+
+    if "подсказка" in user_answer.lower():
+        return await give_hint(msg, state)
+
+    if "сдаюсь" in user_answer.lower():
+        game_data = await state.get_data()
+        correct_answer = game_data.get("correct_answer")
+        
+        if correct_answer:
+            await msg.answer(f"Вы сдались. Ответ на загадку: {correct_answer}")
+        
+        await msg.answer("Вы сдались! Вот новая загадка:")
+
+        prompt = "Придумай новую загадку, которая будет сложнее предыдущей."
+        next_question = generate_text_yand(prompt)
+
+        prompt_answer = f"Дай правильный ответ на загадку: {next_question}"
+        next_answer = generate_text_yand(prompt_answer)
+
+        await state.update_data(current_question=next_question, correct_answer=next_answer)
+        
+        await msg.answer(f"Новая загадка: {next_question}")
+        return
+
+    game_data = await state.get_data()
+    correct_answer = game_data.get("correct_answer")
+
+    prompt = f"Пользователь ответил на загадку: {user_answer}. Ответ правильный?"
+    response = generate_text_yand(prompt)
+    
+    if response and 'правильно' in response.lower():
+        await msg.answer("Правильно! Молодец!")
+        await state.update_data(score=1)
+        
+        # Подготовка к следующему вопросу
+        prompt = "Придумай новую загадку, которая будет сложнее предыдущей."
+        next_question = generate_text_yand(prompt)
+
+        prompt_answer = f"Дай правильный ответ на загадку: {next_question}"
+        next_answer = generate_text_yand(prompt_answer)
+
+        await state.update_data(current_question=next_question, correct_answer=next_answer)
+        
+        await msg.answer(f"Новая загадка: {next_question}")
+    else:
+        await msg.answer("Не совсем... Попробуй еще раз!")
+
+# Обработчик для текста с "подсказка"
+async def give_hint(msg: types.Message, state: FSMContext):
+    """
+    Обрабатывает запрос пользователя на подсказку, если текст равен "подсказка"
+    """
+    game_data = await state.get_data()
+    current_question = game_data.get("current_question")
+    
+    if not current_question:
+        await msg.answer("Сначала начни игру с загадками командой /start_riddle.")
+        return
+
+    prompt = f"Для загадки: '{current_question}', придумай подсказку, чтобы помочь пользователю разгадать ее."
+    hint = generate_text_yand(prompt)
+    
+    await msg.answer(f"Подсказка: {hint}")
+
 @router.message()
 async def generate_reply(msg: Message):
     """
@@ -307,3 +404,5 @@ async def generate_reply(msg: Message):
         await msg.answer(generated_text)
     else:
         await msg.answer(text.generate_error)
+
+
