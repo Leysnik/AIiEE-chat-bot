@@ -294,13 +294,12 @@ async def game_answers_handler(msg: Message, state: FSMContext, session):
         await state.clear()
 
 
-# Обработчик команды /start_riddle
-@router.message(Command('start_riddle'))
-async def start_riddle_game(message: types.Message, state: FSMContext):
+@router.callback_query(lambda c: c.data == "start_riddle")
+async def start_riddle_game(callback_query: types.CallbackQuery, state: FSMContext):
     """
-    Обработчик команды /start_riddle для начала игры с загадками
+    Запускает игру с загадками при нажатии на кнопку.
     """
-    prompt = "Придумай лёгкую загадку и дай на неё правильный ответ. Требуется чтобы ответ на загадку состоял из одного слова. ."
+    prompt = "Придумай лёгкую загадку и дай на неё правильный ответ. Требуется чтобы ответ на загадку состоял из одного слова."
     response = generate_text_yand(prompt)  
 
     # Здесь предполагается, что нейросеть формирует ответ в формате "Загадка: [загадка], Ответ: [ответ]"
@@ -314,9 +313,12 @@ async def start_riddle_game(message: types.Message, state: FSMContext):
 
     await state.update_data(current_question=question, correct_answer=correct_answer)
 
-    await message.answer(f"Загадка: {question}\nПопробуйте ответить!")
+    # Отправляем пользователю загадку
+    await callback_query.message.answer(f"Загадка: {question}\nПопробуйте ответить!")
 
+    # Устанавливаем состояние игры (например, ожидаем ответа от пользователя)
     await state.set_state(GamesForm.answering)
+
 
 # Обработчик для получения ответа на загадку
 @router.message(GamesForm.answering)

@@ -4,7 +4,7 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder
 # Главное меню
 menu = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="📝 Ежедневные задания", callback_data="daily_tasks"),
-     InlineKeyboardButton(text="🎮 Мини-игры", callback_data="mini_games")],
+     InlineKeyboardButton(text="🎮 Мини-игра", callback_data="start_riddle")],
     [InlineKeyboardButton(text="📈 Прогресс", callback_data="progress"),
      InlineKeyboardButton(text="📚 Советы", callback_data="tips")],
     #[InlineKeyboardButton(text="⚙️ Настройка сложности", callback_data="settings")],
