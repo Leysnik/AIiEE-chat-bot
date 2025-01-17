@@ -107,3 +107,6 @@ def validate_group(group):
 
 def validate_sex(sex: str) -> bool:
     return sex.lower() in ['мужской', 'женский', 'male', 'female', 'муж', 'жен']
+
+def remove_special_symbols(string):
+    return re.sub(r"[^a-zA-Zа-яА-Я ,]", "", string)

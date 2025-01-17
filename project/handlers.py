@@ -13,7 +13,7 @@ from aiogram.filters import Command
 from aiogram import types
 
 from utils import generate_text_yand, validate_name, validate_group
-from daily_tasks import generate_words
+from games import generate_words, generate_riddle
 from states import RegistrationForm, GamesForm
 import kb
 from kb import generate_keyboard_markup
@@ -300,18 +300,7 @@ async def start_riddle_game(callback_query: types.CallbackQuery, state: FSMConte
     Обработчик команды /start_riddle для начала игры с загадками.
     """
     await state.update_data(question_count=0) 
-    
-    rules = (
-        "добро пожаловать в игру с загадками! 🧩\n\n"
-        "правила игры:\n\n"
-        "1. бот задаёт вам загадки. Ответ должен быть одним словом.\n"
-        "2. если вы хотите получить подсказку, напишите 'подсказка'.\n"
-        "3. если вы сдаётесь, напишите 'сдаюсь'. Бот выдаст правильный ответ и предложит новую загадку.\n"
-        "4. на игру даётся 5 загадок, количество попыток на ответ не ограничено.\n"
-        "5. не обижайтесь если у нашей нейросети не получилось хорошо сгенерировать загадку, она обязательно исправится!🤗\n\n"
-        "Удачи! 🎉😉"
-    )
-    await callback_query.message.answer(rules)
+    await callback_query.message.answer(text.rules)
 
     await generate_and_ask_question(callback_query.message, state)
 
@@ -320,46 +309,25 @@ async def generate_and_ask_question(message: types.Message, state: FSMContext):
     """
     Генерация новой загадки и отправка пользователю.
     """
-    game_data = await state.get_data()
-    question_count = game_data.get("question_count", 0)
-
-    max_questions = 5
-    if question_count >= max_questions:
-        await message.answer(
-            "вы ответили на все загадки!😃 Игра окончена. напишите /start_riddle для начала новой игры."
-        )
-        await state.finish()
+    result = generate_riddle()
+    if result is None:
+        await message.answer(text.generate_error)
         return
-
-    prompt = """"Придумай загадку, которая подходит для людей любого возраста, но не является слишком простой или слишком сложной. Загадка должна быть логичной и однозначной. Ответ на загадку должен быть одним осмысленным словом.
-                Загадка должна описывать объект или явление, которое легко узнаваемо, но не является очевидным с первого взгляда. Постарайся сделать загадку интересной, используя метафоры или элементы описания, 
-                которые не слишком очевидны, но при этом легко воспринимаются.
-                
-                Пример формата:
-
-                [Текст загадки] Ответ: [Ответ на загадку]
-
-                Убедись, что ответ можно точно отгадать, и что его можно выразить одним словом. Убедись, что загадка не имеет подвоха и является логичной.
     
-             """
-    response = generate_text_yand(prompt)
-
-    if "Ответ:" in response:
-        question, correct_answer = response.split("Ответ:", 1)
-        question = question.strip()
-        correct_answer = correct_answer.strip()
-    else:
-        question = response
-        correct_answer = "нейросеть не придумала ответ на эту загадку, простите, наша нейросеть ещё учится и может ошибаться 🫣"
-
-    await state.update_data(
-        current_question=question,
-        correct_answer=correct_answer,
-        question_count=question_count + 1,
-    )
-    await message.answer(f"загадка {question_count + 1}/{max_questions}: {question.replace("(", "").replace(")", "").replace("«", "").replace("»", "").replace("1", "").strip()}\n\nПопробуйте ответить!💅")
+    question_count = await state.get_value('question_count', 0) + 1
+    if question_count > 3:
+        await state.clear()
+        await message.answer(text.game_completed)
+        return
+    
+    await state.update_data(question_count=question_count)
+    
+    question = result[0]
+    answer = result[1]
+    
     await state.set_state(GamesForm.answering)
-
+    await state.update_data(answer=answer, question=question)
+    await message.answer(question)
 
 @router.message(GamesForm.answering)
 async def handle_answer(msg: types.Message, state: FSMContext):
@@ -367,19 +335,15 @@ async def handle_answer(msg: types.Message, state: FSMContext):
     Обработка ответа пользователя на загадку.
     """
     user_answer = msg.text.strip().lower()
+    correct_answer = await state.get_value("answer")
 
-    if "подсказка" in user_answer:
+    if "подсказка" == user_answer:
         return await give_hint(msg, state)
 
-    if "сдаюсь" in user_answer:
-        game_data = await state.get_data()
-        correct_answer = game_data.get("correct_answer", "нейросеть не придумала ответ на эту загадку, простите, наша нейросеть ещё учится и может ошибаться 🫣")
-        correct_answer = correct_answer.replace("(", "").replace(")", "").replace(".", "").replace("0", "").replace("1", "").replace("2", "").replace("3", "").replace("4", "").replace("5", "").replace("6", "").replace("7", "").replace("8", "").replace("9", "")
+    if "сдаюсь" == user_answer:
         await msg.answer(f"вы сдались???🫨\nправильный ответ: {correct_answer}")
-        return await generate_and_ask_question(msg, state)
-
-    game_data = await state.get_data()
-    correct_answer = game_data.get("correct_answer", "").lower().strip()
+        await generate_and_ask_question(msg, state)
+        return
 
     if user_answer == correct_answer:
         await msg.answer("правильно! молодец!🙂")
@@ -394,10 +358,6 @@ async def give_hint(msg: types.Message, state: FSMContext):
     """
     game_data = await state.get_data()
     current_question = game_data.get("current_question")
-
-    if not current_question:
-        await msg.answer("сначала начните игру с загадками.")
-        return
 
     prompt = f"для загадки: '{current_question}', придумай подсказку."
     hint = generate_text_yand(prompt)

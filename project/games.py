@@ -1,4 +1,4 @@
-from utils import generate_text_yand
+from utils import generate_text_yand, remove_special_symbols
 
 # Функция для генерации задания
 def generate_daily_task():
@@ -54,4 +54,27 @@ def generate_words(count):
     words = content.split()
     return words
 
+def generate_riddle():
+    prompt = """"Придумай загадку, которая подходит для людей любого возраста, но не является слишком простой или слишком сложной. Загадка должна быть логичной и однозначной. Ответ на загадку должен быть одним осмысленным словом.
+            Загадка должна описывать объект или явление, которое легко узнаваемо, но не является очевидным с первого взгляда. Постарайся сделать загадку интересной, используя метафоры или элементы описания, 
+            которые не слишком очевидны, но при этом легко воспринимаются.
+            
+            Пример формата:
 
+            [Текст загадки] Ответ: [Ответ на загадку]
+
+            Убедись, что ответ можно точно отгадать, и что его можно выразить одним словом. Убедись, что загадка не имеет подвоха и является логичной.
+            """
+    response = generate_text_yand(prompt)
+    if response is None:
+        return None
+    
+    result = response.split("Ответ: ")
+    
+    if len(result) != 2:
+        return None
+    
+    question = remove_special_symbols(result[0].strip())
+    answer = remove_special_symbols(result[1].strip().lower())
+    
+    return question, answer
