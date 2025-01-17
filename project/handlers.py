@@ -23,43 +23,6 @@ router = Router()
 
 dp = Dispatcher(storage=MemoryStorage())
 
-'''
-@router.message(Command("set_time"))
-async def set_notification_time(message: Message, session):
-    await message.answer("Введите время для уведомлений в формате HH:MM (например, 08:30).")
-
-    # Установим состояние, чтобы обрабатывать следующий ответ
-    await RegistrationForm.notification_time.set()
-
-
-@router.message(StateFilter(RegistrationForm.notification_time))
-async def save_notification_time(message: Message, state: FSMContext, session):
-    try:
-        # Проверяем, что время введено корректно
-        time = message.text.strip()
-        hour, minute = map(int, time.split(":"))
-        
-        # Сохраняем время в базе данных
-        user = session.query(User).filter(User.chat_id == message.chat.id).first()
-        user.notification_time = time
-        session.commit()
-
-        await message.answer(f"Время уведомлений установлено на {time}.")
-    except ValueError:
-        await message.answer("Некорректный формат времени. Пожалуйста, введите время в формате HH:MM.")
-        
-async def send_notifications(bot, session):
-    """
-    Отправляет уведомления пользователям в соответствии с их настройками времени.
-    """
-    users = session.query(User).filter(User.notifications_enabled == True).all()
-    for user in users:
-        try:
-            await bot.send_message(user.chat_id, "Надо пройти ежедневное задание!")
-        except Exception as e:
-            logging.error(f"Не удалось отправить сообщение пользователю {user.chat_id}: {e}")
-'''
-
 async def send_notifications(bot, session):
     """
     Отправляет уведомления всем пользователям в базе данных о необходимости пройти ежедневное задание
@@ -73,6 +36,13 @@ async def send_notifications(bot, session):
             await bot.send_message(user.chat_id, "надо пройти ежедневное задание!")
         except Exception as e:
             logging.error(f"не удалось отправить сообщение пользователю {user.chat_id}: {e}")
+
+@router.callback_query(lambda call : call.data == 'progress')
+async def stats_handler(call : CallbackQuery, session):
+    stats = session.get_user_statistics(call.message.chat.id)
+    ans = text.stats.format(daily_streak=stats['daily_streak'], daily_total=stats['daily_total'], \
+                            games_total=stats['games_total'])
+    await call.message.answer(ans)
 
 @router.message(F.text == "меню")
 @router.message(F.text == "выйти в меню")
@@ -329,7 +299,7 @@ async def handle_answer(msg: types.Message, state: FSMContext):
     """
     user_answer = msg.text.strip().lower()
 
-    if "подсказка" in user_answer.lower():
+    if "подсказка" in user_answer:
         return await give_hint(msg, state)
 
     if "сдаюсь" in user_answer.lower():
@@ -405,5 +375,3 @@ async def generate_reply(msg: Message):
         await msg.answer(generated_text)
     else:
         await msg.answer(text.generate_error)
-
-

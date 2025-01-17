@@ -81,6 +81,15 @@ class DBSession:
         users = self.session.query(User).all()
         return users
     
+    def get_user_statistics(self, chat_id):
+        user = self.session.query(User).filter(User.chat_id == chat_id).one()
+        stats = {
+            'daily_streak' : user.daily_streak,
+            'daily_total' : user.daily_total,
+            'games_total' : user.games_total
+        }
+        return stats
+    
     def user_completed_daily(self, chat_id):
         user = self.session.query(User).filter(User.chat_id == chat_id).one()
         return user.daily_complete
