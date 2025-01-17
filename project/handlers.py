@@ -13,7 +13,7 @@ from aiogram.filters import Command
 from aiogram import types
 
 from utils import generate_text_yand, validate_name, validate_group
-from games import generate_words, generate_riddle
+from daily_tasks import generate_words, generate_riddle
 from states import RegistrationForm, GamesForm
 import kb
 from kb import generate_keyboard_markup
