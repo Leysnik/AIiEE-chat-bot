@@ -32,6 +32,7 @@ class GamesForm(StatesGroup):
     keys = State()         # Состояние для ввода ключевых слов игры
     answers = State()      # Состояние для ввода ответов на вопросы
     answering = State()  # Состояние для игры с последовательностью
+    new_question = State() # Для ожидания новой загадки
 
 def check_registration_state(state):
     """
@@ -49,4 +50,3 @@ def check_registration_state(state):
         RegistrationForm.group.state,
         RegistrationForm.sex.state
     ]
-
