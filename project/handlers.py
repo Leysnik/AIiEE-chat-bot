@@ -36,6 +36,7 @@ async def send_notifications(bot, session):
             await bot.send_message(user.chat_id, "надо пройти ежедневное задание!")
         except Exception as e:
             logging.error(f"не удалось отправить сообщение пользователю {user.chat_id}: {e}")
+            session.delete_user(user.chat_id)
 
 @router.callback_query(lambda call : call.data == 'progress')
 async def stats_handler(call : CallbackQuery, session):

@@ -105,6 +105,11 @@ class DBSession:
         session = self.session
         return session.query(User).filter(User.chat_id == chat_id).count() > 0
     
+    def delete_user(self, chat_id):
+        user = self.session.query(User).filter(User.chat_id == chat_id).one()
+        self.session.delete(user)
+        self.session.commit()
+    
     def update_daily_user_stats(self, chat_id, stats):
         """
         Обновляет ежедневную статистику пользователя в базе данных.
