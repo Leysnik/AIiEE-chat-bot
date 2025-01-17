@@ -26,8 +26,11 @@ start_game = 'Можете начинать писать'
 game_doubt = 'Вы смогли угадать {count} слов'
 already_completed_daily = 'Вы уже выполнили ежедневное задание'
 
+
 stats = '''Вот ваша статистика!
 Вы решаете ежедневное задание уже {daily_streak} дней подряд!
 Всего вы решили {daily_total} ежедневных заданий!
 Также вы решили {games_total} мини-игр
 '''
+leaderboard_header = 'Вот топ пользователей:\n'
+leaderboard_stroke = '{name} - {score}\n'

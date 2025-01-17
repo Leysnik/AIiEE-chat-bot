@@ -44,6 +44,13 @@ async def stats_handler(call : CallbackQuery, session):
                             games_total=stats['games_total'])
     await call.message.answer(ans)
 
+@router.callback_query(lambda call : call.data == 'leaderboard')
+async def stats_handler(call : CallbackQuery, session):
+    users = session.get_best_users()
+    users_ans = "\n".join([text.leaderboard_stroke.format(name=x, score=y) for x, y in users])
+    ans = f'{text.leaderboard_header}{users_ans}'
+    await call.message.answer(ans)
+
 @router.message(F.text == "меню")
 @router.message(F.text == "выйти в меню")
 @router.message(F.text == "◀️ выйти в меню")
@@ -150,7 +157,7 @@ async def start_handler(msg: Message):
     await msg.answer(text.greet.format(name=msg.from_user.full_name), reply_markup=kb.menu)
 
 @router.message(Command('stop'))
-async def start_handler(msg: Message, state: FSMContext):
+async def stop_handler(msg: Message, state: FSMContext):
     """
     Обработчик команды /stop. Завершается состояние FSM и отправляется сообщение о завершении
     :param msg: сообщение от пользователя

@@ -90,6 +90,13 @@ class DBSession:
         }
         return stats
     
+    def get_best_users(self):
+        users = self.session.query(User).order_by((User.daily_total + User.games_total).desc()).limit(10).all()
+        users_data = []
+        for user in users:
+            users_data.append((f'{user.name} {user.forename}', user.daily_total + user.games_total))
+        return users_data
+    
     def user_completed_daily(self, chat_id):
         user = self.session.query(User).filter(User.chat_id == chat_id).one()
         return user.daily_complete
