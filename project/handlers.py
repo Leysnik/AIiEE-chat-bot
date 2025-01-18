@@ -11,9 +11,10 @@ import asyncio
 from aiogram.types import Message
 from aiogram.filters import Command
 from aiogram import types
+import re
 
 from utils import generate_text_yand, validate_name, validate_group
-from daily_tasks import generate_words
+from daily_tasks import generate_words, generate_riddle
 from states import RegistrationForm, GamesForm
 import kb
 from kb import generate_keyboard_markup
@@ -271,105 +272,162 @@ async def game_answers_handler(msg: Message, state: FSMContext, session):
         await state.clear()
 
 
+@router.message(Command('start_riddle'))
+async def start_riddle_game_command(message: Message, state: FSMContext):
+    """
+    Обработчик команды /start_riddle для начала игры с загадками через текстовую команду.
+    """
+    await state.update_data(question_count=0) 
+    await message.answer(text.rules)
+
+    await generate_and_ask_question(message, state)
+
 @router.callback_query(lambda c: c.data == "start_riddle")
 async def start_riddle_game(callback_query: types.CallbackQuery, state: FSMContext):
     """
-    Запускает игру с загадками при нажатии на кнопку.
+    Обработчик команды /start_riddle для начала игры с загадками.
     """
-    prompt = "Придумай лёгкую загадку и дай на неё правильный ответ. Требуется чтобы ответ на загадку состоял из одного слова."
-    response = generate_text_yand(prompt)  
+    await state.update_data(question_count=0) 
+    await callback_query.message.answer(text.rules)
 
-    # Здесь предполагается, что нейросеть формирует ответ в формате "Загадка: [загадка], Ответ: [ответ]"
-    if "Ответ:" in response:
-        question, correct_answer = response.split("Ответ:", 1)
-        question = question.strip()
-        correct_answer = correct_answer.strip()
-    else:
-        question = response
-        correct_answer = "Неизвестный ответ" 
+    await generate_and_ask_question(callback_query.message, state)
 
-    await state.update_data(current_question=question, correct_answer=correct_answer)
 
-    # Отправляем пользователю загадку
-    await callback_query.message.answer(f"Загадка: {question}\nПопробуйте ответить!")
-
-    # Устанавливаем состояние игры (например, ожидаем ответа от пользователя)
+async def generate_and_ask_question(message: types.Message, state: FSMContext):
+    """
+    Генерация новой загадки и отправка пользователю.
+    """
+    result = generate_riddle()
+    if result is None:
+        await message.answer(text.generate_error)
+        return
+    
+    question_count = await state.get_value('question_count', 0) + 1
+    if question_count > 3:
+        await state.clear()
+        await message.answer(text.game_completed)
+        return
+    
+    await state.update_data(question_count=question_count)
+    
+    question = result[0]
+    answer = result[1]
+    
     await state.set_state(GamesForm.answering)
+    await state.update_data(answer=answer, question=question)
+    await message.answer(question)
 
-
-# Обработчик для получения ответа на загадку
 @router.message(GamesForm.answering)
 async def handle_answer(msg: types.Message, state: FSMContext):
     """
-    Обрабатывает ответ игрока, проверяя его правильность
-    :param msg: сообщение с ответом игрока
-    :param state: состояние FSM
+    Обработка ответа пользователя на загадку.
     """
     user_answer = msg.text.strip().lower()
+    correct_answer = await state.get_value("answer")
 
-    if "подсказка" in user_answer:
+    if "подсказка" == user_answer:
         return await give_hint(msg, state)
 
-    if "сдаюсь" in user_answer.lower():
-        game_data = await state.get_data()
-        correct_answer = game_data.get("correct_answer")
-        
-        if correct_answer:
-            await msg.answer(f"Вы сдались. Ответ на загадку: {correct_answer}")
-        
-        await msg.answer("Вы сдались! Вот новая загадка:")
-
-        prompt = "Придумай новую загадку, которая будет сложнее предыдущей."
-        next_question = generate_text_yand(prompt)
-
-        prompt_answer = f"Дай правильный ответ на загадку: {next_question}"
-        next_answer = generate_text_yand(prompt_answer)
-
-        await state.update_data(current_question=next_question, correct_answer=next_answer)
-        
-        await msg.answer(f"Новая загадка: {next_question}")
+    if "сдаюсь" == user_answer:
+        await msg.answer(f"вы сдались???🫨\nправильный ответ: {correct_answer}")
+        await generate_and_ask_question(msg, state)
         return
 
-    game_data = await state.get_data()
-    correct_answer = game_data.get("correct_answer")
-
-    prompt = f"Пользователь ответил на загадку: {user_answer}. Ответ правильный? Принимай ответ если он почти верный"
-    response = generate_text_yand(prompt)
-    
-    if response and 'правильно' in response.lower():
-        await msg.answer("Правильно! Молодец!")
-        await state.update_data(score=1)
-        
-        # Подготовка к следующему вопросу
-        prompt = "Придумай новую загадку, которая будет сложнее предыдущей."
-        next_question = generate_text_yand(prompt)
-
-        prompt_answer = f"Дай правильный ответ на загадку: {next_question}"
-        next_answer = generate_text_yand(prompt_answer)
-
-        await state.update_data(current_question=next_question, correct_answer=next_answer)
-        
-        await msg.answer(f"Новая загадка: {next_question}")
+    if user_answer == correct_answer:
+        await msg.answer("правильно! молодец!🙂")
+        await generate_and_ask_question(msg, state)
     else:
-        await msg.answer("Не совсем... Попробуй еще раз!")
+        await msg.answer("не совсем 😔... попробуйте еще раз!")
 
-# Обработчик для текста с "подсказка"
+
 async def give_hint(msg: types.Message, state: FSMContext):
     """
-    Обрабатывает запрос пользователя на подсказку, если текст равен "подсказка"
+    Обрабатывает запрос на подсказку.
     """
     game_data = await state.get_data()
     current_question = game_data.get("current_question")
-    
-    if not current_question:
-        await msg.answer("Сначала начни игру с загадками командой /start_riddle.")
-        return
 
-    prompt = f"Для загадки: '{current_question}', придумай подсказку, чтобы помочь пользователю разгадать ее."
+    prompt = f"для загадки: '{current_question}', придумай подсказку."
     hint = generate_text_yand(prompt)
-    
-    await msg.answer(f"Подсказка: {hint}")
+    await msg.answer(f"{hint}")
 
+
+import re
+
+def convert_latex_to_text(text: str) -> str:
+    """
+    Преобразует выражения LaTeX в текстовую форму.
+    :param text: Входной текст с LaTeX.
+    :return: Текст без LaTeX.
+    """
+    text = re.sub(r"\\frac\{(\d+)\}\{(\d+)\}", r"\1/\2", text)  # $\frac{1}{3}$ -> 1/3
+
+    text = re.sub(r"\\sqrt\{([^}]+)\}", r"sqrt(\1)", text)
+
+    text = re.sub(r"(\w+)\^\{([^}]+)\}", r"\1^\2", text)  # x^{2} -> x^2
+    text = re.sub(r"(\w+)\^(\w)", r"\1^\2", text)         # x^2 -> x^2
+
+    text = re.sub(r"(\w+)_\{([^}]+)\}", r"\1_\2", text)   # x_{i} -> x_i
+    text = re.sub(r"(\w+)_(\w)", r"\1_\2", text)         # x_i -> x_i
+    
+    greek_letters = {
+        r"\\alpha": "alpha",
+        r"\\beta": "beta",
+        r"\\gamma": "gamma",
+        r"\\delta": "delta",
+        r"\\epsilon": "epsilon",
+        r"\\zeta": "zeta",
+        r"\\eta": "eta",
+        r"\\theta": "theta",
+        r"\\iota": "iota",
+        r"\\kappa": "kappa",
+        r"\\lambda": "lambda",
+        r"\\mu": "mu",
+        r"\\nu": "nu",
+        r"\\xi": "xi",
+        r"\\omicron": "omicron",
+        r"\\pi": "pi",
+        r"\\rho": "rho",
+        r"\\sigma": "sigma",
+        r"\\tau": "tau",
+        r"\\upsilon": "upsilon",
+        r"\\phi": "phi",
+        r"\\chi": "chi",
+        r"\\psi": "psi",
+        r"\\omega": "omega"
+    }
+    for latex, plain in greek_letters.items():
+        text = re.sub(latex, plain, text)
+    
+    # удаление \text{}
+    text = re.sub(r"\\text\{([^}]+)\}", r"\1", text)
+    
+    # удаление \left и \right
+    text = re.sub(r"\\(left|right)", "", text)
+    
+    # удаление оставшихся $...$
+    text = re.sub(r"\$([^$]+)\$", r"\1", text)
+    
+    # удаление оставшихся \
+    text = text.replace("\\", "")
+    
+    return text
+
+@router.message()
+async def generate_reply(msg: Message):
+    """
+    Обрабатывает все сообщения, генерируя ответ с использованием текстового генератора.
+    """
+    prompt = msg.text
+    generated_text = generate_text_yand(prompt, msg.chat.id)
+    if generated_text:
+        clean_text = convert_latex_to_text(generated_text)
+        await msg.answer(clean_text, parse_mode='Markdown')
+    else:
+        await msg.answer(text.generate_error)
+
+
+'''
 @router.message()
 async def generate_reply(msg: Message):
     """
@@ -380,6 +438,7 @@ async def generate_reply(msg: Message):
     prompt = msg.text
     generated_text = generate_text_yand(prompt, msg.chat.id)
     if generated_text:
-        await msg.answer(generated_text)
+        await msg.answer(generated_text, parse_mode='Markdown')
     else:
         await msg.answer(text.generate_error)
+'''
