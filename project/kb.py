@@ -7,9 +7,9 @@ menu = InlineKeyboardMarkup(inline_keyboard=[
      InlineKeyboardButton(text="🎮 Мини-игра", callback_data="start_riddle")],
     [InlineKeyboardButton(text="📈 Прогресс", callback_data="progress"),
      InlineKeyboardButton(text="📚 Советы", callback_data="tips")],
-    #[InlineKeyboardButton(text="⚙️ Настройка сложности", callback_data="settings")],
+    [InlineKeyboardButton(text="⚙️ Настройка сложности", callback_data="settings")],
     [InlineKeyboardButton(text="🏆 Соревнования", callback_data="challenges")],
-    [InlineKeyboardButton(text="⏰ Установить время уведомлений", callback_data="choose_time")],
+    #[InlineKeyboardButton(text="⏰ Установить время уведомлений", callback_data="choose_time")],
     [InlineKeyboardButton(text="🔎 Помощь", callback_data="help")]
 ])
 #menu = InlineKeyboardMarkup(inline_keyboard=menu)
@@ -25,13 +25,12 @@ menu = InlineKeyboardMarkup(inline_keyboard=[
 
 Каждая кнопка привязана к определенному callback_data, который будет использован для обработки действий пользователя
 """
-# Клавиатура для выхода в главное меню
+
 exit_kb = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="◀️ Выйти в меню")]], resize_keyboard=True)
 """
 Клавиатура для возвращения в главное меню, которая будет показываться пользователю в виде обычной кнопки "Выйти в меню"
 """
 
-# Инлайн-клавиатура для выхода в главное меню
 iexit_kb = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="◀️ Выйти в меню", callback_data="menu")]])
 """
 Инлайн-клавиатура с кнопкой "Выйти в меню", которая использует callback_data для навигации
