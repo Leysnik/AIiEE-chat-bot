@@ -283,17 +283,17 @@ async def start_riddle_game_command(message: Message, state: FSMContext):
     await generate_and_ask_question(message, state)
 
 @router.callback_query(lambda c: c.data == "start_riddle")
-async def start_riddle_game(callback_query: types.CallbackQuery, state: FSMContext):
+async def start_riddle_game(callback_query: types.CallbackQuery, state: FSMContext, session):
     """
     Обработчик команды /start_riddle для начала игры с загадками.
     """
     await state.update_data(question_count=0) 
     await callback_query.message.answer(text.rules)
 
-    await generate_and_ask_question(callback_query.message, state)
+    await generate_and_ask_question(callback_query.message, state, session)
 
 
-async def generate_and_ask_question(message: types.Message, state: FSMContext):
+async def generate_and_ask_question(message: types.Message, state: FSMContext, session):
     """
     Генерация новой загадки и отправка пользователю.
     """
@@ -301,9 +301,11 @@ async def generate_and_ask_question(message: types.Message, state: FSMContext):
     if result is None:
         await message.answer(text.generate_error)
         return
-    
+    print(result)
     question_count = await state.get_value('question_count', 0) + 1
     if question_count > 3:
+        game_total = await state.get_value('accept', 0)
+        session.update_user_games(message.chat.id, game_total)
         await state.clear()
         await message.answer(text.game_completed)
         return
@@ -318,7 +320,7 @@ async def generate_and_ask_question(message: types.Message, state: FSMContext):
     await message.answer(question)
 
 @router.message(GamesForm.answering)
-async def handle_answer(msg: types.Message, state: FSMContext):
+async def handle_answer(msg: types.Message, state: FSMContext, session):
     """
     Обработка ответа пользователя на загадку.
     """
@@ -330,12 +332,14 @@ async def handle_answer(msg: types.Message, state: FSMContext):
 
     if "сдаюсь" == user_answer:
         await msg.answer(f"вы сдались???🫨\nправильный ответ: {correct_answer}")
-        await generate_and_ask_question(msg, state)
+        await generate_and_ask_question(msg, state, session)
         return
 
     if user_answer == correct_answer:
+        accept = await state.get_value('accept', 0) + 1
         await msg.answer("правильно! молодец!🙂")
-        await generate_and_ask_question(msg, state)
+        await state.update_data(accept=accept)
+        await generate_and_ask_question(msg, state, session)
     else:
         await msg.answer("не совсем 😔... попробуйте еще раз!")
 

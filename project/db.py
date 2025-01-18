@@ -109,6 +109,13 @@ class DBSession:
         user = self.session.query(User).filter(User.chat_id == chat_id).one()
         self.session.delete(user)
         self.session.commit()
+        
+    def update_user_games(self, chat_id, game_stats):
+        session = self.session
+        user = session.query(User).filter(User.chat_id == chat_id).one()
+        user.games_total += game_stats
+        session.add(user)
+        session.commit()
     
     def update_daily_user_stats(self, chat_id, stats):
         """
