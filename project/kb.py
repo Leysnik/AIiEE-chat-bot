@@ -8,7 +8,7 @@ menu = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="📈 Прогресс", callback_data="progress"),
      InlineKeyboardButton(text="📚 Советы", callback_data="tips")],
     [InlineKeyboardButton(text="⚙️ Настройка сложности", callback_data="settings")],
-    [InlineKeyboardButton(text="🏆 Соревнования", callback_data="challenges")],
+    [InlineKeyboardButton(text="🏆 LeaderBoard", callback_data="leaderboard")],
     #[InlineKeyboardButton(text="⏰ Установить время уведомлений", callback_data="choose_time")],
     [InlineKeyboardButton(text="🔎 Помощь", callback_data="help")]
 ])

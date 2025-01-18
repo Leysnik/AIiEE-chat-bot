@@ -19,48 +19,10 @@ from states import RegistrationForm, GamesForm
 import kb
 from kb import generate_keyboard_markup
 import text
-from db import User, update_daily_user_stats
 
 router = Router()
 
 dp = Dispatcher(storage=MemoryStorage())
-
-'''
-@router.message(Command("set_time"))
-async def set_notification_time(message: Message, session):
-    await message.answer("Введите время для уведомлений в формате HH:MM (например, 08:30).")
-
-    # Установим состояние, чтобы обрабатывать следующий ответ
-    await RegistrationForm.notification_time.set()
-
-
-@router.message(StateFilter(RegistrationForm.notification_time))
-async def save_notification_time(message: Message, state: FSMContext, session):
-    try:
-        # Проверяем, что время введено корректно
-        time = message.text.strip()
-        hour, minute = map(int, time.split(":"))
-        
-        # Сохраняем время в базе данных
-        user = session.query(User).filter(User.chat_id == message.chat.id).first()
-        user.notification_time = time
-        session.commit()
-
-        await message.answer(f"Время уведомлений установлено на {time}.")
-    except ValueError:
-        await message.answer("Некорректный формат времени. Пожалуйста, введите время в формате HH:MM.")
-        
-async def send_notifications(bot, session):
-    """
-    Отправляет уведомления пользователям в соответствии с их настройками времени.
-    """
-    users = session.query(User).filter(User.notifications_enabled == True).all()
-    for user in users:
-        try:
-            await bot.send_message(user.chat_id, "Надо пройти ежедневное задание!")
-        except Exception as e:
-            logging.error(f"Не удалось отправить сообщение пользователю {user.chat_id}: {e}")
-'''
 
 async def send_notifications(bot, session):
     """
@@ -68,12 +30,28 @@ async def send_notifications(bot, session):
     :param bot: объект бота для отправки сообщений
     :param session: сессия для работы с базой данных
     """
-    users = session.query(User).all()
+    session.upadate_daily_streak()
+    users = session.get_users() 
     for user in users:
         try:
             await bot.send_message(user.chat_id, "надо пройти ежедневное задание!")
         except Exception as e:
             logging.error(f"не удалось отправить сообщение пользователю {user.chat_id}: {e}")
+            session.delete_user(user.chat_id)
+
+@router.callback_query(lambda call : call.data == 'progress')
+async def stats_handler(call : CallbackQuery, session):
+    stats = session.get_user_statistics(call.message.chat.id)
+    ans = text.stats.format(daily_streak=stats['daily_streak'], daily_total=stats['daily_total'], \
+                            games_total=stats['games_total'])
+    await call.message.answer(ans)
+
+@router.callback_query(lambda call : call.data == 'leaderboard')
+async def stats_handler(call : CallbackQuery, session):
+    users = session.get_best_users()
+    users_ans = "\n".join([text.leaderboard_stroke.format(name=x, score=y) for x, y in users])
+    ans = f'{text.leaderboard_header}{users_ans}'
+    await call.message.answer(ans)
 
 @router.message(F.text == "меню")
 @router.message(F.text == "выйти в меню")
@@ -97,7 +75,7 @@ async def register_user(msg: Message, state: FSMContext, session):
     :param state: состояние FSM для отслеживания этапов регистрации
     :param session: сессия для работы с базой данных
     """
-    if session.query(User).filter(User.chat_id == msg.chat.id).count() > 0:
+    if session.contains_user(msg.chat.id):
         await msg.answer(text.already_registered)
         return
     await msg.answer(text.name_registration)
@@ -166,10 +144,8 @@ async def register_end(msg: Message, state: FSMContext, session):
     await state.update_data(group=group)
 
     user_data = await state.get_data()
-    user = User(chat_id=msg.chat.id, name=user_data['name'], \
+    session.commit_user(chat_id=msg.chat.id, name=user_data['name'], \
         forename=user_data['forename'], sex=user_data['sex'], group=user_data['group'])
-    session.add(user)
-    session.commit()
     await msg.answer(text.ending_registration)
     await state.clear()
 
@@ -183,7 +159,7 @@ async def start_handler(msg: Message):
     await msg.answer(text.greet.format(name=msg.from_user.full_name), reply_markup=kb.menu)
 
 @router.message(Command('stop'))
-async def start_handler(msg: Message, state: FSMContext):
+async def stop_handler(msg: Message, state: FSMContext):
     """
     Обработчик команды /stop. Завершается состояние FSM и отправляется сообщение о завершении
     :param msg: сообщение от пользователя
@@ -229,8 +205,9 @@ async def daily_tasks_handler(call: CallbackQuery, state: FSMContext, session):
     :param state: состояние FSM
     :param session: сессия для работы с базой данных
     """
-    if session.query(User).filter(User.chat_id == call.message.chat.id).one().daily_complete == 1:
+    if session.user_completed_daily(call.message.chat.id):
         await call.message.answer(text.already_completed_daily)
+        return
     words = generate_words(5)
     incorrect_words = generate_words(5)
     if words is None or incorrect_words is None:
@@ -285,12 +262,12 @@ async def game_answers_handler(msg: Message, state: FSMContext, session):
 
     await state.update_data(keys=keys, attempts=attempts, stats=stats)
     if len(keys) != 0 and attempts == 0:
-        update_daily_user_stats(session, msg.chat.id, stats)
+        session.update_daily_user_stats(msg.chat.id, stats)
         await msg.answer(text.game_doubt.format(count=stats), reply_markup=ReplyKeyboardRemove())
         await state.clear()
         return
     if len(keys) == 0:
-        update_daily_user_stats(session, msg.chat.id, stats)
+        session.update_daily_user_stats(msg.chat.id, stats)
         await msg.answer(text.game_victory, reply_markup=ReplyKeyboardRemove())
         await state.clear()
 
