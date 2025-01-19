@@ -39,14 +39,14 @@ async def send_notifications(bot, session):
             logging.error(f"не удалось отправить сообщение пользователю {user.chat_id}: {e}")
             session.delete_user(user.chat_id)
 
-@router.callback_query(lambda call : call.data == 'progress')
+@router.callback_query(lambda call : call.data == 'progress', State(None))
 async def stats_handler(call : CallbackQuery, session):
     stats = session.get_user_statistics(call.message.chat.id)
     ans = text.stats.format(daily_streak=stats['daily_streak'], daily_total=stats['daily_total'], \
                             games_total=stats['games_total'])
     await call.message.answer(ans)
 
-@router.callback_query(lambda call : call.data == 'leaderboard')
+@router.callback_query(lambda call : call.data == 'leaderboard', State(None))
 async def stats_handler(call : CallbackQuery, session):
     users = session.get_best_users()
     users_ans = "\n".join([text.leaderboard_stroke.format(name=x, score=y) for x, y in users])
@@ -59,7 +59,7 @@ async def stats_handler(call : CallbackQuery, session):
 @router.message(F.text == "Меню")
 @router.message(F.text == "Выйти в меню")
 @router.message(F.text == "◀️ Выйти в меню")
-@router.message(Command('menu'))
+@router.message(Command('menu'), State(None))
 async def menu(msg: Message):
     """
     Обработчик нажатия кнопки "Меню". Отправляет пользователю приветственное сообщение и клавиатуру меню
@@ -149,7 +149,7 @@ async def register_end(msg: Message, state: FSMContext, session):
     await msg.answer(text.ending_registration)
     await state.clear()
 
-@router.message(CommandStart())
+@router.message(CommandStart(), State(None))
 async def start_handler(msg: Message):
     """
     Обработчик команды /start. Отправляет приветственное сообщение с клавиатурой меню
@@ -173,7 +173,7 @@ async def stop_handler(msg: Message, state: FSMContext):
         await msg.answer(text.stop_state)
     await state.clear()
 
-@router.callback_query(F.data == 'tips')
+@router.callback_query(F.data == 'tips', State(None))
 async def tips_handler(callback: Message):
     """
     Обработчик нажатия кнопки "Советы". Отправляет пользователю текст с советами
@@ -185,7 +185,7 @@ async def tips_handler(callback: Message):
         return
     await callback.message.answer(res, parse_mode="Markdown")
 
-@router.callback_query(F.data == 'help')
+@router.callback_query(F.data == 'help', State(None))
 async def help_handler(callback: Message):
     """
     Обработчик нажатия кнопки "Помощь". Отправляет пользователю информацию о боте
@@ -273,17 +273,17 @@ async def game_answers_handler(msg: Message, state: FSMContext, session):
         await state.clear()
 
 
-@router.message(Command('start_riddle'))
-async def start_riddle_game_command(message: Message, state: FSMContext):
+@router.message(Command('start_riddle'), State(None))
+async def start_riddle_game_command(message: Message, state: FSMContext, session):
     """
     Обработчик команды /start_riddle для начала игры с загадками через текстовую команду.
     """
     await state.update_data(question_count=0) 
     await message.answer(text.rules)
 
-    await generate_and_ask_question(message, state)
+    await generate_and_ask_question(message, state, session)
 
-@router.callback_query(lambda c: c.data == "start_riddle")
+@router.callback_query(lambda c: c.data == "start_riddle", State(None))
 async def start_riddle_game(call: types.CallbackQuery, state: FSMContext, session):
     """
     Обработчик команды /start_riddle для начала игры с загадками.
@@ -357,11 +357,16 @@ async def give_hint(msg: types.Message, state: FSMContext):
     hint = generate_text_yand(prompt)
     await msg.answer(f"{hint}")
 
-@router.callback_query(lambda call: call.data == "settings")
+@router.callback_query(lambda call: call.data == "settings", State(None))
 async def difficulty_handler(call: types.CallbackQuery, state: FSMContext, session):
     diff = session.get_difficulty(call.message.chat.id)
     await state.set_state(DifficultyForm.level)
     await call.message.answer(text.change_difficulty.format(diff=diff), reply_markup=kb.change_difficulty)
+
+
+@router.message()
+async def generate_unexpected(msg: Message):
+    await msg.answer(text.form_unexpected)
 
 @router.callback_query(DifficultyForm.level)
 async def difficulty_handler(call: types.CallbackQuery, state: FSMContext, session):
@@ -371,8 +376,12 @@ async def difficulty_handler(call: types.CallbackQuery, state: FSMContext, sessi
         level = 0
     elif data == 'diff:medium':
         level = 1
-    else:
+    elif data == 'diff:hard':
         level = 2
+    else:
+        await generate_unexpected(call.message)
+        return
+        
     session.set_difficulty(call.message.chat.id, level)
     await state.clear()
     await call.message.answer(text.changed_difficulty)
@@ -389,7 +398,3 @@ async def generate_reply(msg: Message):
         await msg.answer(clean_text, parse_mode='Markdown')
     else:
         await msg.answer(text.generate_error)
-
-@router.message()
-async def generate_reply(msg: Message):
-    await msg.answer(text.form_unexpected)
