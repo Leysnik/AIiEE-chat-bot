@@ -389,3 +389,7 @@ async def generate_reply(msg: Message):
         await msg.answer(clean_text, parse_mode='Markdown')
     else:
         await msg.answer(text.generate_error)
+
+@router.message()
+async def generate_reply(msg: Message):
+    await msg.answer(text.form_unexpected)
