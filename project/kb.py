@@ -12,6 +12,13 @@ menu = InlineKeyboardMarkup(inline_keyboard=[
     #[InlineKeyboardButton(text="⏰ Установить время уведомлений", callback_data="choose_time")],
     [InlineKeyboardButton(text="🔎 Помощь", callback_data="help")]
 ])
+
+change_difficulty = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="Легкий", callback_data="diff:easy")],
+    [InlineKeyboardButton(text="Средний", callback_data="diff:medium")],
+    [InlineKeyboardButton(text="Сложный", callback_data="diff:hard")]
+])
+
 #menu = InlineKeyboardMarkup(inline_keyboard=menu)
 """
 Главное меню бота с кнопками для различных разделов, таких как:

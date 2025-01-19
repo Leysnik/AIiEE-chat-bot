@@ -15,7 +15,7 @@ import re
 
 from utils import generate_text_yand, validate_name, validate_group, convert_latex_to_text
 from daily_tasks import generate_words, generate_riddle
-from states import RegistrationForm, GamesForm
+from states import RegistrationForm, GamesForm, DifficultyForm
 import kb
 from kb import generate_keyboard_markup
 import text
@@ -208,8 +208,9 @@ async def daily_tasks_handler(call: CallbackQuery, state: FSMContext, session):
     if session.user_completed_daily(call.message.chat.id):
         await call.message.answer(text.already_completed_daily)
         return
-    words = generate_words(5)
-    incorrect_words = generate_words(5)
+    words_count = session.get_difficulty(call.message.chat.id) + 5
+    words = generate_words(words_count)
+    incorrect_words = generate_words(words_count)
     if words is None or incorrect_words is None:
         await call.message.answer(text.generate_error)
         return
@@ -234,7 +235,7 @@ async def run_game(message: Message, state, words, incorrect_words):
         message_id=message.message_id
     )
     await state.set_state(GamesForm.answers)
-    await state.update_data(attempts=5)
+    await state.update_data(attempts=len(words))
     await message.answer(text.start_game, reply_markup=generate_keyboard_markup(total_words))
 
 @router.message(GamesForm.answers)
@@ -283,14 +284,15 @@ async def start_riddle_game_command(message: Message, state: FSMContext):
     await generate_and_ask_question(message, state)
 
 @router.callback_query(lambda c: c.data == "start_riddle")
-async def start_riddle_game(callback_query: types.CallbackQuery, state: FSMContext, session):
+async def start_riddle_game(call: types.CallbackQuery, state: FSMContext, session):
     """
     Обработчик команды /start_riddle для начала игры с загадками.
     """
-    await state.update_data(question_count=0) 
-    await callback_query.message.answer(text.rules)
+    max_question_count = session.get_difficulty(call.message.chat.id) + 3
+    await state.update_data(question_count=0, max=max_question_count) 
+    await call.message.answer(text.rules)
 
-    await generate_and_ask_question(callback_query.message, state, session)
+    await generate_and_ask_question(call.message, state, session)
 
 
 async def generate_and_ask_question(message: types.Message, state: FSMContext, session):
@@ -301,9 +303,9 @@ async def generate_and_ask_question(message: types.Message, state: FSMContext, s
     if result is None:
         await message.answer(text.generate_error)
         return
-    print(result)
     question_count = await state.get_value('question_count', 0) + 1
-    if question_count > 3:
+    max_question_count = await state.get_value('max')
+    if question_count > max_question_count:
         game_total = await state.get_value('accept', 0)
         session.update_user_games(message.chat.id, game_total)
         await state.clear()
@@ -355,7 +357,27 @@ async def give_hint(msg: types.Message, state: FSMContext):
     hint = generate_text_yand(prompt)
     await msg.answer(f"{hint}")
 
-@router.message()
+@router.callback_query(lambda call: call.data == "settings")
+async def difficulty_handler(call: types.CallbackQuery, state: FSMContext, session):
+    diff = session.get_difficulty(call.message.chat.id)
+    await state.set_state(DifficultyForm.level)
+    await call.message.answer(text.change_difficulty.format(diff=diff), reply_markup=kb.change_difficulty)
+
+@router.callback_query(DifficultyForm.level)
+async def difficulty_handler(call: types.CallbackQuery, state: FSMContext, session):
+    data = call.data
+    level = 0
+    if data == 'diff:easy':
+        level = 0
+    elif data == 'diff:medium':
+        level = 1
+    else:
+        level = 2
+    session.set_difficulty(call.message.chat.id, level)
+    await state.clear()
+    await call.message.answer(text.changed_difficulty)
+
+@router.message(State(None))
 async def generate_reply(msg: Message):
     """
     Обрабатывает все сообщения, генерируя ответ с использованием текстового генератора.
@@ -367,20 +389,3 @@ async def generate_reply(msg: Message):
         await msg.answer(clean_text, parse_mode='Markdown')
     else:
         await msg.answer(text.generate_error)
-
-
-'''
-@router.message()
-async def generate_reply(msg: Message):
-    """
-    Обрабатывает все сообщения, генерируя ответ с использованием текстового генератора
-    :param msg: сообщение от пользователя
-    :param session: сессия для работы с базой данных
-    """
-    prompt = msg.text
-    generated_text = generate_text_yand(prompt, msg.chat.id)
-    if generated_text:
-        await msg.answer(generated_text, parse_mode='Markdown')
-    else:
-        await msg.answer(text.generate_error)
-'''

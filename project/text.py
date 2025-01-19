@@ -46,3 +46,7 @@ stats = '''Вот ваша статистика!
 '''
 leaderboard_header = 'Вот топ пользователей:\n'
 leaderboard_stroke = '{name} - {score}\n'
+
+change_difficulty = 'Ваш уровень сложности: {diff}, можете изменить его на один из следующих'
+
+changed_difficulty = 'Вы поменяли уровень сложности'

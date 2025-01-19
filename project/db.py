@@ -32,6 +32,7 @@ class User(Base):
     daily_total = db.Column(db.Integer, default=0)
     daily_complete = db.Column(db.Boolean, default=0)
     games_total = db.Column(db.Integer, default=0)
+    difficulty = db.Column(db.Integer, default=0)
     notification_time = db.Column( db.Time, nullable=True)
 
 class History(Base):
@@ -89,6 +90,16 @@ class DBSession:
             'games_total' : user.games_total
         }
         return stats
+    
+    def get_difficulty(self, chat_id):
+        user = self.session.query(User).filter(User.chat_id == chat_id).one()
+        return user.difficulty
+    
+    def set_difficulty(self, chat_id, level):
+        user = self.session.query(User).filter(User.chat_id == chat_id).one()
+        user.difficulty = level
+        self.session.add(user)
+        self.session.commit()
     
     def get_best_users(self):
         users = self.session.query(User).order_by((User.daily_total + User.games_total).desc()).limit(10).all()
