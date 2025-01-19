@@ -363,7 +363,19 @@ async def difficulty_handler(call: types.CallbackQuery, state: FSMContext, sessi
     await state.set_state(DifficultyForm.level)
     await call.message.answer(text.change_difficulty.format(diff=diff), reply_markup=kb.change_difficulty)
 
-
+@router.message(State(None))
+async def generate_reply(msg: Message):
+    """
+    Обрабатывает все сообщения, генерируя ответ с использованием текстового генератора.
+    """
+    prompt = msg.text
+    generated_text = generate_text_yand(prompt, msg.chat.id)
+    if generated_text:
+        clean_text = convert_latex_to_text(generated_text)
+        await msg.answer(clean_text, parse_mode='Markdown')
+    else:
+        await msg.answer(text.generate_error)
+        
 @router.message()
 async def generate_unexpected(msg: Message):
     await msg.answer(text.form_unexpected)
@@ -385,16 +397,3 @@ async def difficulty_handler(call: types.CallbackQuery, state: FSMContext, sessi
     session.set_difficulty(call.message.chat.id, level)
     await state.clear()
     await call.message.answer(text.changed_difficulty)
-
-@router.message(State(None))
-async def generate_reply(msg: Message):
-    """
-    Обрабатывает все сообщения, генерируя ответ с использованием текстового генератора.
-    """
-    prompt = msg.text
-    generated_text = generate_text_yand(prompt, msg.chat.id)
-    if generated_text:
-        clean_text = convert_latex_to_text(generated_text)
-        await msg.answer(clean_text, parse_mode='Markdown')
-    else:
-        await msg.answer(text.generate_error)
