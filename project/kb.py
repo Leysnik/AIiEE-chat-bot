@@ -8,10 +8,17 @@ menu = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="📈 Прогресс", callback_data="progress"),
      InlineKeyboardButton(text="📚 Советы", callback_data="tips")],
     [InlineKeyboardButton(text="⚙️ Настройка сложности", callback_data="settings")],
-    [InlineKeyboardButton(text="🏆 Соревнования", callback_data="challenges")],
+    [InlineKeyboardButton(text="🏆 LeaderBoard", callback_data="leaderboard")],
     #[InlineKeyboardButton(text="⏰ Установить время уведомлений", callback_data="choose_time")],
     [InlineKeyboardButton(text="🔎 Помощь", callback_data="help")]
 ])
+
+change_difficulty = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="Легкий", callback_data="diff:easy")],
+    [InlineKeyboardButton(text="Средний", callback_data="diff:medium")],
+    [InlineKeyboardButton(text="Сложный", callback_data="diff:hard")]
+])
+
 #menu = InlineKeyboardMarkup(inline_keyboard=menu)
 """
 Главное меню бота с кнопками для различных разделов, таких как:

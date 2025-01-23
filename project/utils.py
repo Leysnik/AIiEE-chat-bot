@@ -143,3 +143,62 @@ def validate_sex(sex: str) -> bool:
 
 def remove_special_symbols(string):
     return re.sub(r"[^a-zA-Zа-яА-ЯёЁ ,?:]", "", string)
+
+def convert_latex_to_text(text: str) -> str:
+    """
+    Преобразует выражения LaTeX в текстовую форму.
+    :param text: Входной текст с LaTeX.
+    :return: Текст без LaTeX.
+    """
+    text = re.sub(r"\\frac\{(\d+)\}\{(\d+)\}", r"\1/\2", text)  # $\frac{1}{3}$ -> 1/3
+
+    text = re.sub(r"\\sqrt\{([^}]+)\}", r"sqrt(\1)", text)
+
+    text = re.sub(r"(\w+)\^\{([^}]+)\}", r"\1^\2", text)  # x^{2} -> x^2
+    text = re.sub(r"(\w+)\^(\w)", r"\1^\2", text)         # x^2 -> x^2
+
+    text = re.sub(r"(\w+)_\{([^}]+)\}", r"\1_\2", text)   # x_{i} -> x_i
+    text = re.sub(r"(\w+)_(\w)", r"\1_\2", text)         # x_i -> x_i
+    
+    greek_letters = {
+        r"\\alpha": "alpha",
+        r"\\beta": "beta",
+        r"\\gamma": "gamma",
+        r"\\delta": "delta",
+        r"\\epsilon": "epsilon",
+        r"\\zeta": "zeta",
+        r"\\eta": "eta",
+        r"\\theta": "theta",
+        r"\\iota": "iota",
+        r"\\kappa": "kappa",
+        r"\\lambda": "lambda",
+        r"\\mu": "mu",
+        r"\\nu": "nu",
+        r"\\xi": "xi",
+        r"\\omicron": "omicron",
+        r"\\pi": "pi",
+        r"\\rho": "rho",
+        r"\\sigma": "sigma",
+        r"\\tau": "tau",
+        r"\\upsilon": "upsilon",
+        r"\\phi": "phi",
+        r"\\chi": "chi",
+        r"\\psi": "psi",
+        r"\\omega": "omega"
+    }
+    for latex, plain in greek_letters.items():
+        text = re.sub(latex, plain, text)
+    
+    # удаление \text{}
+    text = re.sub(r"\\text\{([^}]+)\}", r"\1", text)
+    
+    # удаление \left и \right
+    text = re.sub(r"\\(left|right)", "", text)
+    
+    # удаление оставшихся $...$
+    text = re.sub(r"\$([^$]+)\$", r"\1", text)
+    
+    # удаление оставшихся \
+    text = text.replace("\\", "")
+    
+    return text

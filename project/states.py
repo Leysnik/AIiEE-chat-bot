@@ -33,7 +33,10 @@ class GamesForm(StatesGroup):
     answers = State()      # Состояние для ввода ответов на вопросы
     answering = State()  # Состояние для игры с последовательностью
     new_question = State() # Для ожидания новой загадки
-
+    
+class DifficultyForm(StatesGroup):
+    level = State()
+    
 def check_registration_state(state):
     """
     Функция для проверки, находится ли текущее состояние в процессе регистрации

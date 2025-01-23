@@ -13,54 +13,16 @@ from aiogram.filters import Command
 from aiogram import types
 import re
 
-from utils import generate_text_yand, validate_name, validate_group
+from utils import generate_text_yand, validate_name, validate_group, convert_latex_to_text
 from daily_tasks import generate_words, generate_riddle
-from states import RegistrationForm, GamesForm
+from states import RegistrationForm, GamesForm, DifficultyForm
 import kb
 from kb import generate_keyboard_markup
 import text
-from db import User, update_daily_user_stats
 
 router = Router()
 
 dp = Dispatcher(storage=MemoryStorage())
-
-'''
-@router.message(Command("set_time"))
-async def set_notification_time(message: Message, session):
-    await message.answer("Введите время для уведомлений в формате HH:MM (например, 08:30).")
-
-    # Установим состояние, чтобы обрабатывать следующий ответ
-    await RegistrationForm.notification_time.set()
-
-
-@router.message(StateFilter(RegistrationForm.notification_time))
-async def save_notification_time(message: Message, state: FSMContext, session):
-    try:
-        # Проверяем, что время введено корректно
-        time = message.text.strip()
-        hour, minute = map(int, time.split(":"))
-        
-        # Сохраняем время в базе данных
-        user = session.query(User).filter(User.chat_id == message.chat.id).first()
-        user.notification_time = time
-        session.commit()
-
-        await message.answer(f"Время уведомлений установлено на {time}.")
-    except ValueError:
-        await message.answer("Некорректный формат времени. Пожалуйста, введите время в формате HH:MM.")
-        
-async def send_notifications(bot, session):
-    """
-    Отправляет уведомления пользователям в соответствии с их настройками времени.
-    """
-    users = session.query(User).filter(User.notifications_enabled == True).all()
-    for user in users:
-        try:
-            await bot.send_message(user.chat_id, "Надо пройти ежедневное задание!")
-        except Exception as e:
-            logging.error(f"Не удалось отправить сообщение пользователю {user.chat_id}: {e}")
-'''
 
 async def send_notifications(bot, session):
     """
@@ -68,12 +30,28 @@ async def send_notifications(bot, session):
     :param bot: объект бота для отправки сообщений
     :param session: сессия для работы с базой данных
     """
-    users = session.query(User).all()
+    session.upadate_daily_streak()
+    users = session.get_users() 
     for user in users:
         try:
             await bot.send_message(user.chat_id, "надо пройти ежедневное задание!")
         except Exception as e:
             logging.error(f"не удалось отправить сообщение пользователю {user.chat_id}: {e}")
+            session.delete_user(user.chat_id)
+
+@router.callback_query(lambda call : call.data == 'progress', State(None))
+async def stats_handler(call : CallbackQuery, session):
+    stats = session.get_user_statistics(call.message.chat.id)
+    ans = text.stats.format(daily_streak=stats['daily_streak'], daily_total=stats['daily_total'], \
+                            games_total=stats['games_total'])
+    await call.message.answer(ans)
+
+@router.callback_query(lambda call : call.data == 'leaderboard', State(None))
+async def stats_handler(call : CallbackQuery, session):
+    users = session.get_best_users()
+    users_ans = "\n".join([text.leaderboard_stroke.format(name=x, score=y) for x, y in users])
+    ans = f'{text.leaderboard_header}{users_ans}'
+    await call.message.answer(ans)
 
 @router.message(F.text == "меню")
 @router.message(F.text == "выйти в меню")
@@ -81,7 +59,7 @@ async def send_notifications(bot, session):
 @router.message(F.text == "Меню")
 @router.message(F.text == "Выйти в меню")
 @router.message(F.text == "◀️ Выйти в меню")
-@router.message(Command('menu'))
+@router.message(Command('menu'), State(None))
 async def menu(msg: Message):
     """
     Обработчик нажатия кнопки "Меню". Отправляет пользователю приветственное сообщение и клавиатуру меню
@@ -97,7 +75,7 @@ async def register_user(msg: Message, state: FSMContext, session):
     :param state: состояние FSM для отслеживания этапов регистрации
     :param session: сессия для работы с базой данных
     """
-    if session.query(User).filter(User.chat_id == msg.chat.id).count() > 0:
+    if session.contains_user(msg.chat.id):
         await msg.answer(text.already_registered)
         return
     await msg.answer(text.name_registration)
@@ -166,14 +144,12 @@ async def register_end(msg: Message, state: FSMContext, session):
     await state.update_data(group=group)
 
     user_data = await state.get_data()
-    user = User(chat_id=msg.chat.id, name=user_data['name'], \
+    session.commit_user(chat_id=msg.chat.id, name=user_data['name'], \
         forename=user_data['forename'], sex=user_data['sex'], group=user_data['group'])
-    session.add(user)
-    session.commit()
     await msg.answer(text.ending_registration)
     await state.clear()
 
-@router.message(CommandStart())
+@router.message(CommandStart(), State(None))
 async def start_handler(msg: Message):
     """
     Обработчик команды /start. Отправляет приветственное сообщение с клавиатурой меню
@@ -183,7 +159,7 @@ async def start_handler(msg: Message):
     await msg.answer(text.greet.format(name=msg.from_user.full_name), reply_markup=kb.menu)
 
 @router.message(Command('stop'))
-async def start_handler(msg: Message, state: FSMContext):
+async def stop_handler(msg: Message, state: FSMContext):
     """
     Обработчик команды /stop. Завершается состояние FSM и отправляется сообщение о завершении
     :param msg: сообщение от пользователя
@@ -197,7 +173,7 @@ async def start_handler(msg: Message, state: FSMContext):
         await msg.answer(text.stop_state)
     await state.clear()
 
-@router.callback_query(F.data == 'tips')
+@router.callback_query(F.data == 'tips', State(None))
 async def tips_handler(callback: Message):
     """
     Обработчик нажатия кнопки "Советы". Отправляет пользователю текст с советами
@@ -209,7 +185,7 @@ async def tips_handler(callback: Message):
         return
     await callback.message.answer(res, parse_mode="Markdown")
 
-@router.callback_query(F.data == 'help')
+@router.callback_query(F.data == 'help', State(None))
 async def help_handler(callback: Message):
     """
     Обработчик нажатия кнопки "Помощь". Отправляет пользователю информацию о боте
@@ -229,10 +205,12 @@ async def daily_tasks_handler(call: CallbackQuery, state: FSMContext, session):
     :param state: состояние FSM
     :param session: сессия для работы с базой данных
     """
-    if session.query(User).filter(User.chat_id == call.message.chat.id).one().daily_complete == 1:
+    if session.user_completed_daily(call.message.chat.id):
         await call.message.answer(text.already_completed_daily)
-    words = generate_words(5)
-    incorrect_words = generate_words(5)
+        return
+    words_count = session.get_difficulty(call.message.chat.id) + 5
+    words = generate_words(words_count)
+    incorrect_words = generate_words(words_count)
     if words is None or incorrect_words is None:
         await call.message.answer(text.generate_error)
         return
@@ -257,7 +235,7 @@ async def run_game(message: Message, state, words, incorrect_words):
         message_id=message.message_id
     )
     await state.set_state(GamesForm.answers)
-    await state.update_data(attempts=5)
+    await state.update_data(attempts=len(words))
     await message.answer(text.start_game, reply_markup=generate_keyboard_markup(total_words))
 
 @router.message(GamesForm.answers)
@@ -285,38 +263,39 @@ async def game_answers_handler(msg: Message, state: FSMContext, session):
 
     await state.update_data(keys=keys, attempts=attempts, stats=stats)
     if len(keys) != 0 and attempts == 0:
-        update_daily_user_stats(session, msg.chat.id, stats)
+        session.update_daily_user_stats(msg.chat.id, stats)
         await msg.answer(text.game_doubt.format(count=stats), reply_markup=ReplyKeyboardRemove())
         await state.clear()
         return
     if len(keys) == 0:
-        update_daily_user_stats(session, msg.chat.id, stats)
+        session.update_daily_user_stats(msg.chat.id, stats)
         await msg.answer(text.game_victory, reply_markup=ReplyKeyboardRemove())
         await state.clear()
 
 
-@router.message(Command('start_riddle'))
-async def start_riddle_game_command(message: Message, state: FSMContext):
+@router.message(Command('start_riddle'), State(None))
+async def start_riddle_game_command(message: Message, state: FSMContext, session):
     """
     Обработчик команды /start_riddle для начала игры с загадками через текстовую команду.
     """
     await state.update_data(question_count=0) 
     await message.answer(text.rules)
 
-    await generate_and_ask_question(message, state)
+    await generate_and_ask_question(message, state, session)
 
-@router.callback_query(lambda c: c.data == "start_riddle")
-async def start_riddle_game(callback_query: types.CallbackQuery, state: FSMContext):
+@router.callback_query(lambda c: c.data == "start_riddle", State(None))
+async def start_riddle_game(call: types.CallbackQuery, state: FSMContext, session):
     """
     Обработчик команды /start_riddle для начала игры с загадками.
     """
-    await state.update_data(question_count=0) 
-    await callback_query.message.answer(text.rules)
+    max_question_count = session.get_difficulty(call.message.chat.id) + 3
+    await state.update_data(question_count=0, max=max_question_count) 
+    await call.message.answer(text.rules)
 
-    await generate_and_ask_question(callback_query.message, state)
+    await generate_and_ask_question(call.message, state, session)
 
 
-async def generate_and_ask_question(message: types.Message, state: FSMContext):
+async def generate_and_ask_question(message: types.Message, state: FSMContext, session):
     """
     Генерация новой загадки и отправка пользователю.
     """
@@ -324,9 +303,11 @@ async def generate_and_ask_question(message: types.Message, state: FSMContext):
     if result is None:
         await message.answer(text.generate_error)
         return
-    
     question_count = await state.get_value('question_count', 0) + 1
-    if question_count > 3:
+    max_question_count = await state.get_value('max')
+    if question_count > max_question_count:
+        game_total = await state.get_value('accept', 0)
+        session.update_user_games(message.chat.id, game_total)
         await state.clear()
         await message.answer(text.game_completed)
         return
@@ -341,7 +322,7 @@ async def generate_and_ask_question(message: types.Message, state: FSMContext):
     await message.answer(question)
 
 @router.message(GamesForm.answering)
-async def handle_answer(msg: types.Message, state: FSMContext):
+async def handle_answer(msg: types.Message, state: FSMContext, session):
     """
     Обработка ответа пользователя на загадку.
     """
@@ -353,12 +334,14 @@ async def handle_answer(msg: types.Message, state: FSMContext):
 
     if "сдаюсь" == user_answer:
         await msg.answer(f"вы сдались???🫨\nправильный ответ: {correct_answer}")
-        await generate_and_ask_question(msg, state)
+        await generate_and_ask_question(msg, state, session)
         return
 
     if user_answer == correct_answer:
+        accept = await state.get_value('accept', 0) + 1
         await msg.answer("правильно! молодец!🙂")
-        await generate_and_ask_question(msg, state)
+        await state.update_data(accept=accept)
+        await generate_and_ask_question(msg, state, session)
     else:
         await msg.answer("не совсем 😔... попробуйте еще раз!")
 
@@ -374,69 +357,13 @@ async def give_hint(msg: types.Message, state: FSMContext):
     hint = generate_text_yand(prompt)
     await msg.answer(f"{hint}")
 
+@router.callback_query(lambda call: call.data == "settings", State(None))
+async def difficulty_handler(call: types.CallbackQuery, state: FSMContext, session):
+    diff = session.get_difficulty(call.message.chat.id)
+    await state.set_state(DifficultyForm.level)
+    await call.message.answer(text.change_difficulty.format(diff=diff), reply_markup=kb.change_difficulty)
 
-import re
-
-def convert_latex_to_text(text: str) -> str:
-    """
-    Преобразует выражения LaTeX в текстовую форму.
-    :param text: Входной текст с LaTeX.
-    :return: Текст без LaTeX.
-    """
-    text = re.sub(r"\\frac\{(\d+)\}\{(\d+)\}", r"\1/\2", text)  # $\frac{1}{3}$ -> 1/3
-
-    text = re.sub(r"\\sqrt\{([^}]+)\}", r"sqrt(\1)", text)
-
-    text = re.sub(r"(\w+)\^\{([^}]+)\}", r"\1^\2", text)  # x^{2} -> x^2
-    text = re.sub(r"(\w+)\^(\w)", r"\1^\2", text)         # x^2 -> x^2
-
-    text = re.sub(r"(\w+)_\{([^}]+)\}", r"\1_\2", text)   # x_{i} -> x_i
-    text = re.sub(r"(\w+)_(\w)", r"\1_\2", text)         # x_i -> x_i
-    
-    greek_letters = {
-        r"\\alpha": "alpha",
-        r"\\beta": "beta",
-        r"\\gamma": "gamma",
-        r"\\delta": "delta",
-        r"\\epsilon": "epsilon",
-        r"\\zeta": "zeta",
-        r"\\eta": "eta",
-        r"\\theta": "theta",
-        r"\\iota": "iota",
-        r"\\kappa": "kappa",
-        r"\\lambda": "lambda",
-        r"\\mu": "mu",
-        r"\\nu": "nu",
-        r"\\xi": "xi",
-        r"\\omicron": "omicron",
-        r"\\pi": "pi",
-        r"\\rho": "rho",
-        r"\\sigma": "sigma",
-        r"\\tau": "tau",
-        r"\\upsilon": "upsilon",
-        r"\\phi": "phi",
-        r"\\chi": "chi",
-        r"\\psi": "psi",
-        r"\\omega": "omega"
-    }
-    for latex, plain in greek_letters.items():
-        text = re.sub(latex, plain, text)
-    
-    # удаление \text{}
-    text = re.sub(r"\\text\{([^}]+)\}", r"\1", text)
-    
-    # удаление \left и \right
-    text = re.sub(r"\\(left|right)", "", text)
-    
-    # удаление оставшихся $...$
-    text = re.sub(r"\$([^$]+)\$", r"\1", text)
-    
-    # удаление оставшихся \
-    text = text.replace("\\", "")
-    
-    return text
-
-@router.message()
+@router.message(State(None))
 async def generate_reply(msg: Message):
     """
     Обрабатывает все сообщения, генерируя ответ с использованием текстового генератора.
@@ -448,20 +375,25 @@ async def generate_reply(msg: Message):
         await msg.answer(clean_text, parse_mode='Markdown')
     else:
         await msg.answer(text.generate_error)
-
-
-'''
+        
 @router.message()
-async def generate_reply(msg: Message):
-    """
-    Обрабатывает все сообщения, генерируя ответ с использованием текстового генератора
-    :param msg: сообщение от пользователя
-    :param session: сессия для работы с базой данных
-    """
-    prompt = msg.text
-    generated_text = generate_text_yand(prompt, msg.chat.id)
-    if generated_text:
-        await msg.answer(generated_text, parse_mode='Markdown')
+async def generate_unexpected(msg: Message):
+    await msg.answer(text.form_unexpected)
+
+@router.callback_query(DifficultyForm.level)
+async def difficulty_handler(call: types.CallbackQuery, state: FSMContext, session):
+    data = call.data
+    level = 0
+    if data == 'diff:easy':
+        level = 0
+    elif data == 'diff:medium':
+        level = 1
+    elif data == 'diff:hard':
+        level = 2
     else:
-        await msg.answer(text.generate_error)
-'''
+        await generate_unexpected(call.message)
+        return
+        
+    session.set_difficulty(call.message.chat.id, level)
+    await state.clear()
+    await call.message.answer(text.changed_difficulty)
